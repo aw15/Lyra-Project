@@ -23,7 +23,7 @@
     <ProjectGuid>{25179D6C-FA85-4619-8EDB-AC241382F6CA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleGame</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -157,7 +157,8 @@
     <ClInclude Include="LoadPng.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ScnMgr.h" />
+    <ClInclude Include="MainScene.h" />
+    <ClInclude Include="Slime.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -167,8 +168,9 @@
     <ClCompile Include="LoadPng.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="ScnMgr.cpp" />
+    <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="SimpleGame.cpp" />
+    <ClCompile Include="Slime.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

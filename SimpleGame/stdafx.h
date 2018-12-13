@@ -4,28 +4,20 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <iostream>
-#include <Windows.h>
 #include <chrono>
 #include <vector>
+#include<unordered_map>
+#include<string>
 #include<windows.h>
-
-#include "targetver.h"
-#include "renderer.h"
-#include"object.h"
-
 using namespace std;
 
-
+#define WIDTH 500
+#define HEIGHT 500
 
 #define PLAYER 0
 #define PLAYER2 1
 #define FRICTION_COEF 5.f //¸¶Âû·Â Å©±â
 #define GRAVITY 9.8f
-#define KEY_FORCE 1000.0f
-#define LEFT 75
-#define RIGHT 77
-#define UP 72
-#define DOWN 80
 
 
 using Time = std::chrono::high_resolution_clock;
@@ -42,8 +34,8 @@ struct Rect
 
 struct Vector3D
 {
-	float x=0;
-	float y=0;
+	float x = 0;
+	float y = 0;
 	float z = 0;
 };
 
@@ -52,6 +44,17 @@ struct Vector2D
 	float x = 0;
 	float y = 0;
 };
+
+#include "renderer.h"
+#include"object.h"
+#include"InputHandler.h"
+
+
+
+
+
+
+
 
 const float UPDATE_FREQUENCY{ 1.f / 120.f };
 

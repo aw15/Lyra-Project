@@ -11,15 +11,17 @@ public:
 
 class MoveCommand : public Command
 {
-	Vector2D dir;
+	Vector3D dir;
 public:
-	MoveCommand();
+	MoveCommand(float x, float y, float z) { dir.x = x; dir.y = y; dir.z = z; }
 	virtual void Execute(Object* object);
-
-
 };
 
-
+class JumpCommand : public Command
+{
+public:
+	virtual void Execute(Object* object);
+};
 
 class FireCommand : public Command
 {

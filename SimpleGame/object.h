@@ -2,21 +2,21 @@
 class Object	 //그리는거 모아논거
 {
 private:
-	Vector2D position;
-	float width;
-	float height;
+	Vector3D position;
+	float width = 0.f;
+	float height = 0.f;
 public:
-	Object();
+	Object() = default;
 	~Object();
 	/////////////////SET/////////////////////////////////////////////
-
+	void SetPosition(Vector3D& position) { this->position = position; }
 	////////////////GET////////////////////////////////////////////////
-
+	void GetPosition(Vector3D& position) { position = this->position; }
 	///////////////////////////////////////////////////////////////////
-	void Move(const Vector2D& dir);
-	void Fire();
+	virtual void Move(const Vector3D& dir);
+	virtual void Fire();
 	///////////////////////////////////////////////////////////////
-	void Update(float eTime);
-	void Draw(Renderer* renderer, GLuint tex = NULL);
+	virtual void Update(float eTime);
+	virtual void Draw(Renderer* renderer);
 };
 

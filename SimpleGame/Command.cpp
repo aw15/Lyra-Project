@@ -13,10 +13,14 @@ Command::~Command()
 
 void MoveCommand::Execute(Object * object)
 {
-	object->Move(, );
+	object->Move(dir);
 }
 
 void FireCommand::Execute(Object * object)
 {
 	object->Fire();
+}
+
+void JumpCommand::Execute(Object * object)
+{
 }

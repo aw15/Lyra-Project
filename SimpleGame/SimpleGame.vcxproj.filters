@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="GameObject">
       <UniqueIdentifier>{7176556d-f67b-4c4b-b98e-22802b33f530}</UniqueIdentifier>
     </Filter>
@@ -18,15 +14,22 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="InputEvent">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{f17006d8-01cd-4914-985e-e0d3561aaea1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{37f9d9f7-c2d1-494d-bfad-0ddbba120f98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="object.h">
       <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
       <Filter>External</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
@@ -36,26 +39,26 @@
       <Filter>External</Filter>
     </ClInclude>
     <ClInclude Include="Command.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>InputEvent</Filter>
     </ClInclude>
     <ClInclude Include="InputHandler.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>InputEvent</Filter>
     </ClInclude>
-    <ClInclude Include="ScnMgr.h">
+    <ClInclude Include="MainScene.h">
       <Filter>GameMain</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Slime.h">
+      <Filter>GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimpleGame.cpp">
       <Filter>GameMain</Filter>
     </ClCompile>
-    <ClCompile Include="ScnMgr.cpp">
-      <Filter>GameMain</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
       <Filter>External</Filter>
     </ClCompile>
     <ClCompile Include="LoadPng.cpp">
@@ -65,10 +68,19 @@
       <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
-      <Filter>GameMain</Filter>
+      <Filter>InputEvent</Filter>
     </ClCompile>
     <ClCompile Include="InputHandler.cpp">
+      <Filter>InputEvent</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScene.cpp">
       <Filter>GameMain</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Slime.cpp">
+      <Filter>GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
