@@ -625,11 +625,11 @@ GLuint Renderer::CompileShaders(char* filenameVS, char* filenameFS)
 	return ShaderProgram;
 }
 
-void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, float g, float b, float a, float level)
+void Renderer::DrawSolidRect(Vector3D& pos, float size, Color& color, float level)
 {
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectShader;
 
@@ -643,7 +643,7 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 	glDepthFunc(GL_LEQUAL);
 
 	glUniform4f(glGetUniformLocation(shader, "u_Trans"), newX, newY, size*m_sceneScaleX, size*m_sceneScaleY);
-	glUniform4f(glGetUniformLocation(shader, "u_Color"), r, g, b, a);
+	glUniform4f(glGetUniformLocation(shader, "u_Color"), color.r, color.g, color.b, color.a);
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	int attribPosition = glGetAttribLocation(shader, "a_Position");
@@ -656,11 +656,11 @@ void Renderer::DrawSolidRect(float x, float y, float z, float size, float r, flo
 	glDisableVertexAttribArray(attribPosition);
 }
 
-void Renderer::DrawSolidRectXY(float x, float y, float z, float width, float height, float r, float g, float b, float a, float level)
+void Renderer::DrawSolidRectXY(Vector3D& pos, float width, float height, Color& color, float level)
 {
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectXYShader;
 
@@ -674,7 +674,7 @@ void Renderer::DrawSolidRectXY(float x, float y, float z, float width, float hei
 	glDepthFunc(GL_LEQUAL);
 
 	glUniform4f(glGetUniformLocation(shader, "u_Trans"), newX, newY, width*m_sceneScaleX, height*m_sceneScaleY);
-	glUniform4f(glGetUniformLocation(shader, "u_Color"), r, g, b, a);
+	glUniform4f(glGetUniformLocation(shader, "u_Color"), color.r, color.g, color.b, color.a);
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	int attribPosition = glGetAttribLocation(shader, "a_Position");
@@ -687,13 +687,13 @@ void Renderer::DrawSolidRectXY(float x, float y, float z, float width, float hei
 	glDisableVertexAttribArray(attribPosition);
 }
 
-void Renderer::DrawSolidRectGauge(float x, float y, float z, float width, float height, float r, float g, float b, float a, float gauge, float level)
+void Renderer::DrawSolidRectGauge(Vector3D& pos, float width, float height, Color& color, float gauge, float level)
 {
-	DrawBorderXY(x, y, z, width, height, 1, 1, 1, 0.5, level);
+	DrawBorderXY( pos.x, pos.y, pos.z , width, height,  1, 1, 1, 0.5 , level);
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectGaugeShader;
 
@@ -712,7 +712,7 @@ void Renderer::DrawSolidRectGauge(float x, float y, float z, float width, float 
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	glUniform4f(u_Trans, newX, newY, width*m_sceneScaleX, height*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 	glUniform1f(u_Gauge, gauge);
 
 	GLuint attribPosition = glGetAttribLocation(shader, "a_Position");
@@ -761,13 +761,13 @@ void Renderer::DrawBorderXY(float x, float y, float z, float width, float height
 	glDisableVertexAttribArray(attribPosition);
 }
 
-void Renderer::DrawTexturedRect(float x, float y, float z, float size, float r, float g, float b, float a, GLuint texID, float level)
+void Renderer::DrawTexturedRect(Vector3D& pos, float size, Color& color, GLuint texID, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectWithTextureShader;
 
@@ -785,7 +785,7 @@ void Renderer::DrawTexturedRect(float x, float y, float z, float size, float r, 
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	glUniform4f(u_Trans, newX, newY, size*m_sceneScaleX, size*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 
 	GLuint attribPosition = glGetAttribLocation(shader, "a_Position");
 	GLuint attribTexPosition = glGetAttribLocation(shader, "a_TexPosition");
@@ -807,13 +807,13 @@ void Renderer::DrawTexturedRect(float x, float y, float z, float size, float r, 
 	glDisableVertexAttribArray(attribTexPosition);
 }
 
-void Renderer::DrawTexturedRectSeq(float x, float y, float z, float size, float r, float g, float b, float a, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level)
+void Renderer::DrawTexturedRectSeq(Vector3D& pos, float size, Color& color, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectWithTextureSeqShader;
 
@@ -835,7 +835,7 @@ void Renderer::DrawTexturedRectSeq(float x, float y, float z, float size, float 
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	glUniform4f(u_Trans, newX, newY, size*m_sceneScaleX, size*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 	glUniform1f(u_TotalSeqX, (float)totalSeqX);
 	glUniform1f(u_CurrSeqX, (float)currSeqX);
 	glUniform1f(u_TotalSeqY, (float)totalSeqY);
@@ -861,13 +861,13 @@ void Renderer::DrawTexturedRectSeq(float x, float y, float z, float size, float 
 	glDisableVertexAttribArray(attribTexPosition);
 }
 
-void Renderer::DrawTexturedRectXY(float x, float y, float z, float width, float height, float r, float g, float b, float a, GLuint texID, float level)
+void Renderer::DrawTexturedRectXY(Vector3D& pos, float width, float height, Color& color, GLuint texID, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectWithTextureShader;
 
@@ -885,7 +885,7 @@ void Renderer::DrawTexturedRectXY(float x, float y, float z, float width, float 
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	glUniform4f(u_Trans, newX, newY, width*m_sceneScaleX, height*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 
 	GLuint attribPosition = glGetAttribLocation(shader, "a_Position");
 	GLuint attribTexPosition = glGetAttribLocation(shader, "a_TexPosition");
@@ -907,13 +907,13 @@ void Renderer::DrawTexturedRectXY(float x, float y, float z, float width, float 
 	glDisableVertexAttribArray(attribTexPosition);
 }
 
-void Renderer::DrawTexturedRectSeqXY(float x, float y, float z, float width, float height, float r, float g, float b, float a, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level)
+void Renderer::DrawTexturedRectSeqXY(Vector3D& pos, float width, float height, Color& color, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_SolidRectWithTextureSeqShader;
 
@@ -935,7 +935,7 @@ void Renderer::DrawTexturedRectSeqXY(float x, float y, float z, float width, flo
 	glUniform1f(glGetUniformLocation(shader, "u_Depth"), level);
 
 	glUniform4f(u_Trans, newX, newY, width*m_sceneScaleX, height*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 	glUniform1f(u_TotalSeqX, (float)totalSeqX);
 	glUniform1f(u_CurrSeqX, (float)currSeqX);
 	glUniform1f(u_TotalSeqY, (float)totalSeqY);
@@ -961,13 +961,13 @@ void Renderer::DrawTexturedRectSeqXY(float x, float y, float z, float width, flo
 	glDisableVertexAttribArray(attribTexPosition);
 }
 
-void Renderer::DrawParticle(float x, float y, float z, float size, float r, float g, float b, float a, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level)
+void Renderer::DrawParticle(Vector3D& pos, float size, Color& color, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_ParticleWithTextureShader;
 
@@ -1006,7 +1006,7 @@ void Renderer::DrawParticle(float x, float y, float z, float size, float r, floa
 	glUniform1f(uniformElapsedTime, timeInSeconds);
 	glUniform1i(uniformTexture, 0);
 	glUniform4f(u_Trans, newX, newY, size*m_sceneScaleX, size*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 	glUniform3f(u_TrailDir, gDirX, gDirY, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -1021,13 +1021,13 @@ void Renderer::DrawParticle(float x, float y, float z, float size, float r, floa
 	glDepthMask(GL_TRUE);
 }
 
-void Renderer::DrawParticleClimate(float x, float y, float z, float size, float r, float g, float b, float a, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level)
+void Renderer::DrawParticleClimate(Vector3D& pos, float size, Color& color, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level)
 {
 	GLuint tID = texID;
 
 	float newX, newY;
 
-	GetGLPosition(x, y, &newX, &newY);
+	GetGLPosition(pos.x, pos.y, &newX, &newY);
 
 	GLuint shader = m_ParticleWithTextureShader;
 
@@ -1066,7 +1066,7 @@ void Renderer::DrawParticleClimate(float x, float y, float z, float size, float 
 	glUniform1f(uniformElapsedTime, timeInSeconds);
 	glUniform1i(uniformTexture, 0);
 	glUniform4f(u_Trans, newX, newY, size*m_sceneScaleX, size*m_sceneScaleY);
-	glUniform4f(u_Color, r, g, b, a);
+	glUniform4f(u_Color, color.r, color.g, color.b, color.a);
 	glUniform3f(u_TrailDir, gDirX, gDirY, 0);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -1081,14 +1081,14 @@ void Renderer::DrawParticleClimate(float x, float y, float z, float size, float 
 	glDepthMask(GL_TRUE);
 }
 
-void Renderer::DrawText(float x, float y, void* font, float r, float g, float b, char* text)
+void Renderer::DrawText(Vector2D& pos, void* font, Color& color, char* text)
 {
 	glUseProgram(0);
 	glDisable(GL_LIGHTING);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-	glWindowPos2i(x + m_WindowSizeX / 2, y + m_WindowSizeY / 2);
-	glColor3f(r, g, b);
+	glWindowPos2i(pos.x + m_WindowSizeX / 2, pos.y + m_WindowSizeY / 2);
+	glColor3f(color.r, color.g, color.b);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glutBitmapString(GLUT_BITMAP_HELVETICA_10, (unsigned char*)text);
 }
@@ -1099,10 +1099,10 @@ void Renderer::GetGLPosition(float x, float y, float *newX, float *newY)
 	*newY = y * 2.f / m_WindowSizeY + m_sceneTransY;
 }
 
-void Renderer::SetSceneTransform(float x, float y, float scaleX, float scaleY)
+void Renderer::SetSceneTransform(Vector2D& pos, float scaleX, float scaleY)
 {
-	m_sceneTransX = x / m_WindowSizeX;
-	m_sceneTransY = y / m_WindowSizeY;
+	m_sceneTransX = pos.x / m_WindowSizeX;
+	m_sceneTransY = pos.y / m_WindowSizeY;
 	m_sceneScaleX = scaleX;
 	m_sceneScaleY = scaleY;
 }

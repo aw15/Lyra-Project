@@ -15,18 +15,19 @@ public:
 	~Renderer();
 
 	bool IsInitialized();
-	void DrawSolidRect(float x, float y, float z, float size, float r, float g, float b, float a, float level);
-	void DrawSolidRectXY(float x, float y, float z, float width, float height, float r, float g, float b, float a, float level);
-	void DrawSolidRectGauge(float x, float y, float z, float width, float height, float r, float g, float b, float a, float gauge, float level);
+	void DrawSolidRect(Vector3D& pos, float size, Color& color, float level);
+	void DrawSolidRectXY(Vector3D& pos, float width, float height, Color& color, float level);
+	void DrawSolidRectGauge(Vector3D& pos, float width, float height, Color& color, float gauge, float level);
+	void DrawTexturedRectXY(Vector3D& pos, float sizeX, float sizeY, Color& color, GLuint texID, float level);
+	void DrawTexturedRectSeqXY(Vector3D& pos, float sizeX, float sizeY, Color& color, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level);
+	void DrawTexturedRect(Vector3D& pos, float size, Color& color, GLuint texID, float level);
+	void DrawTexturedRectSeq(Vector3D& pos, float size, Color& color, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level);
+	void DrawParticle(Vector3D& pos, float size, Color& color, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level);
+	void DrawParticleClimate(Vector3D& pos, float size, Color& color, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level);
+	void DrawText(Vector2D& pos, void* font, Color& color, char* text);
+
+	void SetSceneTransform(Vector2D& pos, float scaleX, float scaleY);
 	void DrawBorderXY(float x, float y, float z, float width, float height, float r, float g, float b, float a, float level);
-	void DrawTexturedRectXY(float x, float y, float z, float sizeX, float sizeY, float r, float g, float b, float a, GLuint texID, float level);
-	void DrawTexturedRectSeqXY(float x, float y, float z, float sizeX, float sizeY, float r, float g, float b, float a, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level);
-	void DrawTexturedRect(float x, float y, float z, float size, float r, float g, float b, float a, GLuint texID, float level);
-	void DrawTexturedRectSeq(float x, float y, float z, float size, float r, float g, float b, float a, GLuint texID, int currSeqX, int currSeqY, int totalSeqX, int totalSeqY, float level);
-	void DrawParticle(float x, float y, float z, float size, float r, float g, float b, float a, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level);
-	void DrawParticleClimate(float x, float y, float z, float size, float r, float g, float b, float a, float gDirX, float gDirY, GLuint texID, float timeInSeconds, float level);
-	void DrawText(float x, float y, void* font, float r, float g, float b, char* text);
-	void SetSceneTransform(float x, float y, float scaleX, float scaleY);
 
 	unsigned char * loadBMPRaw(const char * imagepath, unsigned int& outWidth, unsigned int& outHeight, bool flipY);
 

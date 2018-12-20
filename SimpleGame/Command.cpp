@@ -11,16 +11,22 @@ Command::~Command()
 {
 }
 
-void MoveCommand::Execute(Object * object)
+void MoveCommand::Execute(Object& object)
 {
-	object->Move(dir);
+	object.Move(dir);
 }
 
-void FireCommand::Execute(Object * object)
+
+void JumpCommand::Execute(Object& object)
 {
-	object->Fire();
 }
 
-void JumpCommand::Execute(Object * object)
+void IdleCommand::Execute(Object & object)
 {
+	object.Idle();
+}
+
+void AirAttackCommand::Execute(Object & object)
+{
+	object.AirAttack();
 }

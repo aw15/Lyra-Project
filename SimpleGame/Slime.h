@@ -1,5 +1,5 @@
 #pragma once
-class Slime2D:public Object
+class Slime2D
 {
 private:
 	const string texture = "slime";

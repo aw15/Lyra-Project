@@ -15,28 +15,31 @@ but WITHOUT ANY WARRANTY.
 
 MainScene *mainScene;
 
-TimePoint g_PrevTime = Time::now();
-float g_timeAccumulator = 0;//시간을 누적
+
+
 
 
 void RenderScene(void)  
 {
+
+	static TimePoint prevTime = Time::now();
+	static float timeAccumulator = 0;//시간을 누적
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
 
-	TimePoint currTime = Time::now();
-	float elapsedTime = TimeDuration(currTime - g_PrevTime).count();
-	g_PrevTime = currTime;
-	g_timeAccumulator += elapsedTime;
 
-	while (g_timeAccumulator >= UPDATE_FREQUENCY)//float는 계산할수록 에러가 나니까 같은 시간을 업데이트에게 줄려구
+
+	TimePoint currTime = Time::now();
+	TimeDuration timediff = currTime - prevTime;
+	prevTime = currTime;
+	timeAccumulator += timediff.count();
+	while (timeAccumulator >= UPDATE_FREQUENCY)
 	{
 		mainScene->Update(UPDATE_FREQUENCY);
-		g_timeAccumulator -= UPDATE_FREQUENCY;
+		mainScene->Draw();
+		timeAccumulator -= UPDATE_FREQUENCY;
 	}
-
-	mainScene->Draw();
-
 	glutSwapBuffers();
 }
 
@@ -57,7 +60,7 @@ void MouseInput(int button, int state, int x, int y)
 
 void KeyInput(unsigned char key, int x, int y)
 {
-	mainScene->KeyInput(key, x, y);
+	mainScene->KeyInput(key);
 
 
 	RenderScene();
@@ -66,7 +69,7 @@ void KeyInput(unsigned char key, int x, int y)
 
 void KeyUpInput(unsigned char key, int x, int y)
 {
-
+	mainScene->KeyUpInput(key);
 	RenderScene();
 }
 
@@ -107,6 +110,7 @@ int main(int argc, char **argv)
 	glutKeyboardUpFunc(KeyUpInput);
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
+	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
 	
 	glutMainLoop();

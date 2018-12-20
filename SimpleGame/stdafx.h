@@ -19,6 +19,18 @@ using namespace std;
 #define FRICTION_COEF 5.f //¸¶Âû·Â Å©±â
 #define GRAVITY 9.8f
 
+//PLAYER_IMAGE
+#define IDLE_IMAGE 0x01
+#define RUN_IMAGE 0x02
+#define AIR_ATTACK_IMAGE 0x03
+
+
+//INPUT
+enum KEY_STATUS
+{
+	PRESS,
+	RELEASE
+};
 
 using Time = std::chrono::high_resolution_clock;
 using TimePoint = Time::time_point;
@@ -31,6 +43,16 @@ struct Rect
 	float maxx;
 	float maxy;
 };
+
+struct Color
+{
+	float r = 0;
+	float g = 0;
+	float b = 0;
+	float a = 0;
+};
+
+
 
 struct Vector3D
 {
@@ -45,20 +67,15 @@ struct Vector2D
 	float y = 0;
 };
 
+
 #include "renderer.h"
-#include"object.h"
 #include"InputHandler.h"
-
-
-
-
-
-
-
+#include "PlayerState.h"
+#include"object.h"
+#include"Player.h"
 
 const float UPDATE_FREQUENCY{ 1.f / 120.f };
 
 float magnitude(float x, float y);
-
 
 bool isCollide(Rect &standard, Rect &compare);

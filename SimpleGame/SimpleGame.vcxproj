@@ -156,6 +156,8 @@
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LoadPng.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerState.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Slime.h" />
@@ -167,6 +169,8 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="LoadPng.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerState.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="SimpleGame.cpp" />

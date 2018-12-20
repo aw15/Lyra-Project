@@ -21,8 +21,8 @@
     <Filter Include="Common">
       <UniqueIdentifier>{f17006d8-01cd-4914-985e-e0d3561aaea1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{37f9d9f7-c2d1-494d-bfad-0ddbba120f98}</UniqueIdentifier>
+    <Filter Include="Player">
+      <UniqueIdentifier>{d9a6bbd2-fc8a-4109-85de-d039a56d6d03}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +53,12 @@
     <ClInclude Include="Slime.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerState.h">
+      <Filter>Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimpleGame.cpp">
@@ -81,6 +87,12 @@
     </ClCompile>
     <ClCompile Include="Slime.cpp">
       <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerState.cpp">
+      <Filter>Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

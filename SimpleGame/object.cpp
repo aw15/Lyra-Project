@@ -1,3 +1,4 @@
+ 
 #include "stdafx.h"
 #include "object.h"
 
@@ -7,32 +8,47 @@
 
 
 
+Object::Object(Renderer * renderer)
+{
+	this->renderer = renderer;
+}
+
 Object::~Object()
 {
 }
 
 
-
 void Object::Move(const Vector3D& dir)
 {
-	position.x += dir.x;
-	position.y += dir.y;
+	this->dir.x = dir.x;
+	this->dir.y = dir.y;
+}
+
+void Object::Idle()
+{
+	dir.x = 0;
+	dir.y = 0;
 }
 
 void Object::Fire()
 {
 }
 
-void Object::Update(float eTime)
+void Object::AirAttack()
 {
-	
-
 }
 
-void Object::Draw(Renderer* renderer)
-{
-	renderer->DrawSolidRect(position.x, position.y, position.z, 10.0f, 1.f, 0.f, 0.f, 1.f, 0.1f);
-}
+//void Object::Update(float eTime)
+//{
+//	position.x += dir.x*velocity.x*eTime;
+//	position.y += dir.y*velocity.y*eTime;
+//	position.z += dir.y*velocity.y*eTime;
+//}
+//
+//void Object::Draw()
+//{
+//	renderer->DrawSolidRect(position.x, position.y, position.z, 10.0f, 1.f, 0.f, 0.f, 1.f, 0.1f);
+//}
 
 
 

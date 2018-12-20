@@ -6,12 +6,14 @@ class MainScene
 {
 	Renderer *renderer;
 	InputHandler* inputHandler;
-	Object testObject;
+	Object *testObject;
 public:
 	MainScene();
 	~MainScene();
+	void MakeTexture();
 	void Draw();
 	void Update(float time);
-	void KeyInput(unsigned char key, int x, int y);
+	void KeyInput(unsigned char key);
+	void KeyUpInput(unsigned char key);
 };
 
