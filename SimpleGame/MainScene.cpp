@@ -41,7 +41,7 @@ void MainScene::Update(float time)
 
 void MainScene::KeyUpInput(unsigned char key)
 {
-	testObject->HandleInput(key, KEY_STATUS::RELEASE);
+	testObject->HandleInput(key, KeyStatus::RELEASE);
 }
 
 
@@ -50,7 +50,7 @@ void MainScene::KeyUpInput(unsigned char key)
 	
 void MainScene::KeyInput(unsigned char key)
 {
-	testObject->HandleInput(key, KEY_STATUS::PRESS);
+	testObject->HandleInput(key, KeyStatus::PRESS);
 }
 
 

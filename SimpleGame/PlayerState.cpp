@@ -5,13 +5,13 @@
 
 
 
-string MoveState::handleInput(Object& object,char key, KEY_STATUS status)
+string MoveState::handleInput(Object& object,char key, KeyStatus status)
 {
 
 	return "";
 }
 
-string IdleState::handleInput(Object& object,char key, KEY_STATUS status)
+string IdleState::handleInput(Object& object,char key, KeyStatus status)
 {
 
 	return "";

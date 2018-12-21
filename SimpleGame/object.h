@@ -16,8 +16,7 @@ public:
 	virtual ~Object();
 	/////////////////SET/////////////////////////////////////////////
 	void SetPosition(Vector3D& position) { this->position = position; }
-	virtual void SetState(string name) = 0;
-	virtual void SetGraphic(const int image) =0;
+	virtual void SetGraphic(const unsigned int image) =0;
 	////////////////GET////////////////////////////////////////////////
 	void GetPosition(Vector3D& position) { position = this->position; }
 	////////////////////////INPUT MOVEMENT/////////////////////////////
@@ -28,6 +27,6 @@ public:
 	///////////////////////////////////////////////////////////////
 	virtual void Update(float eTime) = 0;
 	virtual void Draw() = 0;
-	virtual void HandleInput(const char key, KEY_STATUS status) = 0;
+	virtual void HandleInput(const char key, KeyStatus status) = 0;
 };
 

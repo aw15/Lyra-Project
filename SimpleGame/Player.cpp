@@ -4,9 +4,7 @@
 
 Player::Player(Renderer * renderer) : Object(renderer)
 {
-	states["idle"] = new IdleState;
-	states["move"] = new MoveState;
-	SetState("idle");
+	SetGraphic(IDLE_IMAGE);
 }
 
 
@@ -28,7 +26,7 @@ void Player::Update(float eTime)
 	position.z += dir.y*velocity.y*eTime;
 }
 
-void Player::HandleInput(const char key, KEY_STATUS status)
+void Player::HandleInput(const char key, KeyStatus status)
 {
 	Command* command = inputHandler.handleInput(key,status);
 
@@ -42,13 +40,18 @@ void Player::HandleInput(const char key, KEY_STATUS status)
 
 void Player::Move(const Vector3D & dir)
 {
-	this->dir.x = dir.x;
-	this->dir.y = dir.y;
-	SetGraphic(RUN_IMAGE);
+
+	if (playerState != State::AIRATTACK)
+	{
+		this->dir.x = dir.x;
+		this->dir.y = dir.y;
+		SetGraphic(RUN_IMAGE);
+	}
 }
 
 void Player::Idle()
 {
+	playerState = State::IDLE;
 	dir.x = 0;
 	dir.x = 0;
 	SetGraphic(IDLE_IMAGE);
@@ -56,10 +59,16 @@ void Player::Idle()
 
 void Player::AirAttack()
 {
-	SetGraphic(AIR_ATTACK_IMAGE);
+	if (playerState != State::RUN)
+	{
+		playerState = State::AIRATTACK;
+		dir.x = 0;
+		dir.x = 0;
+		SetGraphic(AIR_ATTACK_IMAGE);
+	}
 }
 
-void Player::SetGraphic(const int image)
+void Player::SetGraphic(const unsigned int image)
 {
 	switch (image)
 	{
@@ -78,16 +87,4 @@ void Player::SetGraphic(const int image)
 	}
 }
 
-void Player::SetState(string name)
-{
-	currentState = states[name];
-	if (name == "idle")
-	{
-		SetGraphic(IDLE_IMAGE);
-	}
-	if (name == "run")
-	{
-		SetGraphic(RUN_IMAGE);
-	}
-}
 

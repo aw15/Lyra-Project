@@ -11,22 +11,20 @@ InputHandler::~InputHandler()
 {
 }
 
-Command* InputHandler::handleInput(char key,KEY_STATUS status)
+Command* InputHandler::handleInput(char key,KeyStatus status)
 {
 	switch (status)
 	{
-	case KEY_STATUS::PRESS:
+	case KeyStatus::PRESS:
 		if (key == 'a') return key_a;
 		if (key == 'd') return key_d;
-		if (key == 'w') return key_w;
-		if (key == 's') return key_s;
 		if (key == 'f')return key_f;
 		break;
-	case KEY_STATUS::RELEASE:
+	case KeyStatus::RELEASE:
 		if (key == 'a') return keyUp_a;
 		if (key == 'd') return keyUp_d;
-		if (key == 'w') return keyUp_w;
-		if (key == 's') return keyUp_s;
+		if (key == 'f')return keyUp_f;
+		break;
 	}
 	return nullptr;
 }

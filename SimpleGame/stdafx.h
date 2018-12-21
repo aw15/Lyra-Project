@@ -9,6 +9,7 @@
 #include<unordered_map>
 #include<string>
 #include<windows.h>
+#include<memory.h>
 using namespace std;
 
 #define WIDTH 500
@@ -20,13 +21,24 @@ using namespace std;
 #define GRAVITY 9.8f
 
 //PLAYER_IMAGE
-#define IDLE_IMAGE 0x01
-#define RUN_IMAGE 0x02
-#define AIR_ATTACK_IMAGE 0x03
+#define IDLE_IMAGE 0b0000'0001u
+#define RUN_IMAGE 0x0000'0010u
+#define AIR_ATTACK_IMAGE 0b000'0100u
 
+
+#define TurnOn(a,b) a |= b
+#define TurnOff(a,b) a &=~b
+
+//PLAYER_STATE
+enum class State
+{
+	IDLE,
+	RUN,
+	AIRATTACK
+};
 
 //INPUT
-enum KEY_STATUS
+enum KeyStatus
 {
 	PRESS,
 	RELEASE
