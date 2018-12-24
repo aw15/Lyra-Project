@@ -24,6 +24,9 @@
     <Filter Include="Player">
       <UniqueIdentifier>{d9a6bbd2-fc8a-4109-85de-d039a56d6d03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{16867594-baeb-42cb-8162-bf707da2e60e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="object.h">
@@ -56,8 +59,8 @@
     <ClInclude Include="Player.h">
       <Filter>Player</Filter>
     </ClInclude>
-    <ClInclude Include="PlayerState.h">
-      <Filter>Player</Filter>
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Physics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -91,8 +94,8 @@
     <ClCompile Include="Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
-    <ClCompile Include="PlayerState.cpp">
-      <Filter>Player</Filter>
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

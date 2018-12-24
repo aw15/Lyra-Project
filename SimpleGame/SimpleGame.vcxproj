@@ -111,7 +111,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(projectdir)Dependencies\64bit;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>irrKlang.lib;glew32s.lib;glew32.lib;freeglut.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Box2D.lib;irrKlang.lib;glew32s.lib;glew32.lib;freeglut.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -142,13 +142,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(ProjectDir)Dependencies;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);freeglut.lib;glew32.lib;</AdditionalDependencies>
+      <AdditionalDependencies>Box2D.lib;irrKlang.lib;glew32s.lib;glew32.lib;freeglut.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>.\Dependencies\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -157,8 +158,8 @@
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="LoadPng.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerState.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="MainScene.h" />
     <ClInclude Include="Slime.h" />
@@ -170,8 +171,8 @@
     <ClCompile Include="InputHandler.cpp" />
     <ClCompile Include="LoadPng.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerState.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="SimpleGame.cpp" />

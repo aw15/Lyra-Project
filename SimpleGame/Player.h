@@ -6,8 +6,10 @@ class Player:public Object
 public:
 	Player(Renderer* renderer);
 	~Player();
+	virtual void InitPhysics() override final;
+	/////////////////////////////////////////////////////////////////
 	void Draw() override final;
-	void Update(float eTime) override final;
+	void Update() override final;
 	void HandleInput(const char key, KeyStatus status) override final;
 	//////////////////////INPUT MOVEMENT///////////////////////////////
 	void Move(const Vector3D& dir)override final;
@@ -25,5 +27,10 @@ private:
 	string currentImageName = "";
 
 	State playerState = State::IDLE;
+	////PHYSICS//////////////////////////
+	b2FixtureDef fixtureDef;
+	b2PolygonShape dynamicBox;
+	b2BodyDef bodyDef;
+	b2Body* body;
 };
 

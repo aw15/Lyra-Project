@@ -5,6 +5,9 @@
 Player::Player(Renderer * renderer) : Object(renderer)
 {
 	SetGraphic(IDLE_IMAGE);
+	width = 1;
+	height = 1;
+
 }
 
 
@@ -12,18 +15,43 @@ Player::~Player()
 {
 }
 
-void Player::Draw()
+void Player::InitPhysics()
 {
-	renderer->DrawTexturedRectSeq(position, 100, color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY,0.1);
+
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(TOMETER(position.x), TOMETER(position.y));
+	body = PhysicsComponent::world.CreateBody(&bodyDef);
+
+
+	dynamicBox.SetAsBox(TOMETER(width) / 2, TOMETER(height) / 2);
+
+
+
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	body->CreateFixture(&fixtureDef);
+
 }
 
-void Player::Update(float eTime)
+void Player::Draw()
 {
-	animationTime += eTime*5;
+	Vector3D pixelpos;
+	position = body->GetPosition();
+	position.Print();
+	position.ToPixel(pixelpos);
+	pixelpos.Print();
+	//renderer->DrawSolidRect(pixelpos, TOPIXEL(width)*TOPIXEL(height), color, 0.1);
+	renderer->DrawTexturedRectSeq(pixelpos, TOPIXEL(width*height), color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY,0.1);
+}
 
-	position.x += dir.x*velocity.x*eTime;
-	position.y += dir.y*velocity.y*eTime;
-	position.z += dir.y*velocity.y*eTime;
+void Player::Update()
+{
+	animationTime += UPDATE_FREQUENCY*5;
+
+	position.x += dir.x*velocity.x*UPDATE_FREQUENCY;
+	position.y += dir.y*velocity.y*UPDATE_FREQUENCY;
+	position.z += dir.y*velocity.y*UPDATE_FREQUENCY;
 }
 
 void Player::HandleInput(const char key, KeyStatus status)

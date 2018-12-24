@@ -6,7 +6,11 @@ MainScene::MainScene()
 {
 	renderer = new Renderer(WIDTH,HEIGHT);
 	inputHandler = new InputHandler();
+	PhysicsComponent::Initialize();
+
+
 	testObject = new Player(renderer);
+	testObject->InitPhysics();
 
 	MakeTexture();
 
@@ -36,7 +40,8 @@ void MainScene::Draw()
 
 void MainScene::Update(float time)
 {
-	testObject->Update(time);
+	PhysicsComponent::Update();
+	testObject->Update();
 }
 
 void MainScene::KeyUpInput(unsigned char key)

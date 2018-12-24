@@ -7,6 +7,7 @@ class MainScene
 	Renderer *renderer;
 	InputHandler* inputHandler;
 	Object *testObject;
+	PhysicsComponent physics;
 public:
 	MainScene();
 	~MainScene();

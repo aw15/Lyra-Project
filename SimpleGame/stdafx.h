@@ -10,6 +10,7 @@
 #include<string>
 #include<windows.h>
 #include<memory.h>
+#include"Box2D/Box2D.h"
 using namespace std;
 
 #define WIDTH 500
@@ -18,14 +19,16 @@ using namespace std;
 #define PLAYER 0
 #define PLAYER2 1
 #define FRICTION_COEF 5.f //¸¶Âû·Â Å©±â
-#define GRAVITY 9.8f
-
+#define GRAVITY -9.8f
+const float PPM_RATIO  = 100.f;
+const float UPDATE_FREQUENCY{ 1.f / 60.f };
 //PLAYER_IMAGE
 #define IDLE_IMAGE 0b0000'0001u
-#define RUN_IMAGE 0x0000'0010u
+#define RUN_IMAGE 0b0000'0010u
 #define AIR_ATTACK_IMAGE 0b000'0100u
 
-
+#define TOPIXEL(x) (round(x*PPM_RATIO))
+#define TOMETER(x) (x/PPM_RATIO)
 #define TurnOn(a,b) a |= b
 #define TurnOff(a,b) a &=~b
 
@@ -71,6 +74,15 @@ struct Vector3D
 	float x = 0;
 	float y = 0;
 	float z = 0;
+
+	void Set(const float x, const float y, const float z) { this->x = x; this->y = y; this->z = z; }
+	Vector3D Get() const { return Vector3D{ x,y,z }; }
+	void ToPixel(Vector3D& vec) { vec.x = round(x * PPM_RATIO); vec.y = round(y * PPM_RATIO); vec.z = round(z * PPM_RATIO);}
+	void ToMeter(Vector3D& vec) { vec.x = x / PPM_RATIO; vec.y = y / PPM_RATIO; vec.z = z / PPM_RATIO; }
+
+	void operator=(const b2Vec2& param) { x = param.x; y = param.y; }
+
+	void Print() { printf("position : %f %f %f\n", x, y, z); }
 };
 
 struct Vector2D
@@ -82,11 +94,11 @@ struct Vector2D
 
 #include "renderer.h"
 #include"InputHandler.h"
-#include "PlayerState.h"
 #include"object.h"
 #include"Player.h"
+#include"PhysicsComponent.h"
 
-const float UPDATE_FREQUENCY{ 1.f / 120.f };
+
 
 float magnitude(float x, float y);
 
