@@ -15,10 +15,9 @@ using namespace std;
 
 #define WIDTH 500
 #define HEIGHT 500
-
-#define PLAYER 0
-#define PLAYER2 1
-#define FRICTION_COEF 5.f //¸¶Âû·Â Å©±â
+/////////////////////PHYSICS//////////////////////////////////////
+#define PLAYER_GROUP -1
+#define ENEMY_GROUP -2
 #define GRAVITY -9.8f
 const float PPM_RATIO  = 100.f;
 const float UPDATE_FREQUENCY{ 1.f / 60.f };

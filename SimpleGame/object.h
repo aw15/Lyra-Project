@@ -7,7 +7,7 @@ protected:
 	Vector3D position;
 	Color color = {1,1,1,1};
 	Vector3D dir;
-	Vector3D velocity = {0.02,0.02};
+	Vector3D velocity = {0,0};
 
 	float width = 0.f;
 	float height = 0.f;

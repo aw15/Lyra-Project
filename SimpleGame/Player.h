@@ -19,18 +19,17 @@ public:
 	void SetGraphic(const unsigned int image);
 	////////////////////////GET///////////////////////////////////////
 private:
-	int maxAnimationX = 4;
-	int maxAnimationY = 1;
-	float animationTime = 0;
+	int maxAnimationX;
+	int maxAnimationY;
+	float animationTime;
 
 	InputHandler inputHandler;
-	string currentImageName = "";
+	string currentImageName;
 
-	State playerState = State::IDLE;
+	State playerState;
 	////PHYSICS//////////////////////////
-	b2FixtureDef fixtureDef;
 	b2PolygonShape dynamicBox;
-	b2BodyDef bodyDef;
 	b2Body* body;
+	b2Fixture* fixture;
 };
 

@@ -30,10 +30,14 @@ void PhysicsComponent::Initialize()
 	boxShapeDef.shape = &groundEdge;
 
 	//À§ÂÊ
-	//groundEdge.Set(b2Vec2((WIDTH / 2.0f) / PTM_RATIO, 0 ),b2Vec2((WIDTH/2.0f) / PTM_RATIO, 0));
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
+	b2Vec2 a;
+	b2Vec2 b;
+	a.x = TOMETER(-WIDTH / 2.0f);
+	a.y = TOMETER(-HEIGHT / 2.0f);
+	b.x = TOMETER(WIDTH / 2.0f);
+	b.y = TOMETER(-HEIGHT / 2.0f);
+	groundEdge.Set(a,b);
+	groundBody->CreateFixture(&boxShapeDef);
 
 	//// ¿ŞÂÊ
 

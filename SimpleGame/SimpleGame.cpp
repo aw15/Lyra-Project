@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 	glutKeyboardUpFunc(KeyUpInput);
 	glutMouseFunc(MouseInput);
 	glutSpecialFunc(SpecialKeyInput);
-	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
+//	glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
 
 	
 	glutMainLoop();
