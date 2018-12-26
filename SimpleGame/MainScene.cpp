@@ -6,11 +6,11 @@ MainScene::MainScene()
 {
 	renderer = new Renderer(WIDTH,HEIGHT);
 	inputHandler = new InputHandler();
-	PhysicsComponent::Initialize();
+	PhysicsEngine::Initialize();
 
 
 	testObject = new Player(renderer);
-	testObject->InitPhysics();
+	testObject->Init();
 
 	MakeTexture();
 
@@ -40,7 +40,7 @@ void MainScene::Draw()
 
 void MainScene::Update(float time)
 {
-	PhysicsComponent::Update();
+	PhysicsEngine::Update();
 	testObject->Update();
 }
 

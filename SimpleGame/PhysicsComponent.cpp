@@ -1,12 +1,24 @@
 #include "stdafx.h"
 #include "PhysicsComponent.h"
 
-b2Vec2 PhysicsComponent::gravity = { 0.0f, GRAVITY };
-b2World PhysicsComponent::world{ gravity };
 
-PhysicsComponent::PhysicsComponent()
+PhysicsComponent::PhysicsComponent(const Vector3D& position, const float width, const float height)
 {
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
 
+	bodyDef.position.Set(TOMETER(position.x), TOMETER(position.y));
+	body = PhysicsEngine::world.CreateBody(&bodyDef);
+	dynamicBox.SetAsBox(TOMETER(width) / 2, TOMETER(height) / 2);
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.filter.groupIndex = PLAYER_GROUP;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+
+	body->ResetMassData();//설정한 Density에 맞게 mass 조정
+	fixture = body->CreateFixture(&fixtureDef);
 }
 
 
@@ -14,61 +26,21 @@ PhysicsComponent::~PhysicsComponent()
 {
 }
 
-void PhysicsComponent::Initialize()
+void PhysicsComponent::Update(const Vector3D & dir,const Vector3D& speed)
 {
 
-	world.SetContinuousPhysics(true);
-	world.SetAllowSleeping(true);
+	b2Vec2 force;
+	force.x = dir.x*speed.x*UPDATE_FREQUENCY;
+	force.y = dir.y*speed.y*UPDATE_FREQUENCY;
+	body->ApplyForce(force, body->GetWorldCenter(), true);
 
-
-	b2BodyDef groundBodyDef;
-	groundBodyDef.position.Set(0.0f, 0.0f);
-	b2Body* groundBody = world.CreateBody(&groundBodyDef);
-
-	b2EdgeShape groundEdge;
-	b2FixtureDef boxShapeDef;
-	boxShapeDef.shape = &groundEdge;
-
-	//위쪽
-	b2Vec2 a;
-	b2Vec2 b;
-	a.x = TOMETER(-WIDTH / 2.0f);
-	a.y = TOMETER(-HEIGHT / 2.0f);
-	b.x = TOMETER(WIDTH / 2.0f);
-	b.y = TOMETER(-HEIGHT / 2.0f);
-	groundEdge.Set(a,b);
-	groundBody->CreateFixture(&boxShapeDef);
-
-	//// 왼쪽
-
-	//groundEdge.Set(b2Vec2(0, 0), b2Vec2(0, winSize.height / PTM_RATIO));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
-
-	//// 위쪽
-
-	//groundEdge.Set(b2Vec2(0, winSize.height / PTM_RATIO),
-
-	//	b2Vec2(winSize.width / PTM_RATIO, winSize.height / PTM_RATIO));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
-
-	//// 오른쪽
-
-	//groundEdge.Set(b2Vec2(winSize.width / PTM_RATIO, winSize.height / PTM_RATIO),
-
-	//	b2Vec2(winSize.width / PTM_RATIO, 0));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
+	auto vel = body->GetLinearVelocity();
+	if (vel.x > 0.1f)
+		vel.x = 0.1f;
+	else if(vel.x< -0.1f)
+		vel.x = -0.1f;
+	body->SetLinearVelocity(vel);
 
 }
 
-void PhysicsComponent::Update()
-{
-	world.Step(UPDATE_FREQUENCY,velocityIterations, positionIterations);
-}
+

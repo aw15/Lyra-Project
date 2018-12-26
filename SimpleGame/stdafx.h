@@ -77,6 +77,7 @@ struct Vector3D
 	void Set(const float x, const float y, const float z) { this->x = x; this->y = y; this->z = z; }
 	Vector3D Get() const { return Vector3D{ x,y,z }; }
 	void ToPixel(Vector3D& vec) { vec.x = round(x * PPM_RATIO); vec.y = round(y * PPM_RATIO); vec.z = round(z * PPM_RATIO);}
+	void ToPixel() { x = round(x * PPM_RATIO); y = round(y * PPM_RATIO); z = round(z * PPM_RATIO); }
 	void ToMeter(Vector3D& vec) { vec.x = x / PPM_RATIO; vec.y = y / PPM_RATIO; vec.z = z / PPM_RATIO; }
 
 	void operator=(const b2Vec2& param) { x = param.x; y = param.y; }
@@ -92,10 +93,13 @@ struct Vector2D
 
 
 #include "renderer.h"
+#include"PhysicsEngine.h"
+#include"PhysicsComponent.h"
 #include"InputHandler.h"
 #include"object.h"
 #include"Player.h"
-#include"PhysicsComponent.h"
+
+
 
 
 

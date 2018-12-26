@@ -7,7 +7,7 @@ protected:
 	Vector3D position;
 	Color color = {1,1,1,1};
 	Vector3D dir;
-	Vector3D velocity = {0,0};
+	Vector3D speed = {0,0};
 
 	float width = 0.f;
 	float height = 0.f;
@@ -15,7 +15,7 @@ protected:
 public:
 	Object(Renderer* renderer);
 	virtual ~Object();
-	virtual void InitPhysics() {};
+	virtual void Init() {};
 	/////////////////SET/////////////////////////////////////////////
 	void SetPosition(Vector3D& position) { this->position = position; }
 	virtual void SetGraphic(const unsigned int image) =0;

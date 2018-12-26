@@ -2,14 +2,13 @@
 class PhysicsComponent
 {
 public:
-	PhysicsComponent();
+	PhysicsComponent(const Vector3D& position,const float width,const float height);
 	~PhysicsComponent();
-	static void Initialize();
-	static void Update();
+	void GetPosition(Vector3D& param) { param = body->GetPosition(); }
 
-public:
-	static b2Vec2 gravity;
-	static b2World world;
-	const static int velocityIterations = 6;
-	const static int positionIterations = 2;
+	void Update(const Vector3D& dir,const Vector3D& speed);
+	b2PolygonShape dynamicBox;
+	b2Body* body;
+	b2Fixture* fixture;
 };
+

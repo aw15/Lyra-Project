@@ -6,7 +6,7 @@ class Player:public Object
 public:
 	Player(Renderer* renderer);
 	~Player();
-	virtual void InitPhysics() override final;
+	virtual void Init() override final;
 	/////////////////////////////////////////////////////////////////
 	void Draw() override final;
 	void Update() override final;
@@ -28,8 +28,10 @@ private:
 
 	State playerState;
 	////PHYSICS//////////////////////////
-	b2PolygonShape dynamicBox;
-	b2Body* body;
-	b2Fixture* fixture;
+	PhysicsComponent* physics;
+	//b2PolygonShape dynamicBox;
+	//b2Body* body;
+	//b2Fixture* fixture;
+	
 };
 
