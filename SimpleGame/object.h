@@ -15,13 +15,14 @@ protected:
 public:
 	Object(Renderer* renderer);
 	virtual ~Object();
-	virtual void Init() {};
+	virtual void InitPhysics() {};
 	/////////////////SET/////////////////////////////////////////////
-	void SetPosition(Vector3D& position) { this->position = position; }
+	void SetPosition(const Vector3D& position) { this->position = position; }
+	void SetPosition(const float x, const float y, const float z) { position.x = x; position.y = y; position.z = z; }
 	virtual void SetGraphic(const unsigned int image) =0;
 	void SetSize(const float w, const float h) { width = w; height = h; }
 	////////////////GET////////////////////////////////////////////////
-	void GetPosition(Vector3D& position) { position = this->position; }
+	void GetPosition(Vector3D& position) const { position = this->position; }
 	////////////////////////INPUT MOVEMENT/////////////////////////////
 	virtual void Move(const Vector3D& dir);
 	virtual void Idle();
@@ -30,6 +31,6 @@ public:
 	///////////////////////////////////////////////////////////////
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
-	virtual void HandleInput(const char key, KeyStatus status) = 0;
+	virtual void HandleInput(const char key, KeyStatus status) {};
 };
 

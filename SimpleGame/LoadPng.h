@@ -818,22 +818,22 @@ unsigned lodepng_save_file(const unsigned char* buffer, size_t buffersize, const
 namespace lodepng
 {
 #ifdef LODEPNG_COMPILE_PNG
-	class State : public LodePNGState
+	class PlayerState : public LodePNGState
 	{
 	public:
-		State();
-		State(const State& other);
-		virtual ~State();
-		State& operator=(const State& other);
+		PlayerState();
+		PlayerState(const PlayerState& other);
+		virtual ~PlayerState();
+		PlayerState& operator=(const PlayerState& other);
 	};
 
 #ifdef LODEPNG_COMPILE_DECODER
 	/* Same as other lodepng::decode, but using a State for more settings and information. */
 	unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
-		State& state,
+		PlayerState& state,
 		const unsigned char* in, size_t insize);
 	unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
-		State& state,
+		PlayerState& state,
 		const std::vector<unsigned char>& in);
 #endif /*LODEPNG_COMPILE_DECODER*/
 
@@ -841,10 +841,10 @@ namespace lodepng
 	/* Same as other lodepng::encode, but using a State for more settings and information. */
 	unsigned encode(std::vector<unsigned char>& out,
 		const unsigned char* in, unsigned w, unsigned h,
-		State& state);
+		PlayerState& state);
 	unsigned encode(std::vector<unsigned char>& out,
 		const std::vector<unsigned char>& in, unsigned w, unsigned h,
-		State& state);
+		PlayerState& state);
 #endif /*LODEPNG_COMPILE_ENCODER*/
 
 #ifdef LODEPNG_COMPILE_DISK

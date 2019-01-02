@@ -32,11 +32,19 @@ const float UPDATE_FREQUENCY{ 1.f / 60.f };
 #define TurnOff(a,b) a &=~b
 
 //PLAYER_STATE
-enum class State
+enum class PlayerState
 {
 	IDLE,
 	RUN,
 	AIRATTACK
+};
+
+
+enum class AIState
+{
+	IDLE,
+	MOVE_RIGHT,
+	MOVE_LEFT
 };
 
 //INPUT
@@ -78,7 +86,9 @@ struct Vector3D
 	Vector3D Get() const { return Vector3D{ x,y,z }; }
 	void ToPixel(Vector3D& vec) { vec.x = round(x * PPM_RATIO); vec.y = round(y * PPM_RATIO); vec.z = round(z * PPM_RATIO);}
 	void ToPixel() { x = round(x * PPM_RATIO); y = round(y * PPM_RATIO); z = round(z * PPM_RATIO); }
+
 	void ToMeter(Vector3D& vec) { vec.x = x / PPM_RATIO; vec.y = y / PPM_RATIO; vec.z = z / PPM_RATIO; }
+	void ToMeter() { x = x / PPM_RATIO; y = y / PPM_RATIO; z = z / PPM_RATIO; }
 
 	void operator=(const b2Vec2& param) { x = param.x; y = param.y; }
 
@@ -97,7 +107,6 @@ struct Vector2D
 #include"PhysicsComponent.h"
 #include"InputHandler.h"
 #include"object.h"
-#include"Player.h"
 
 
 

@@ -11,7 +11,7 @@ InputHandler::~InputHandler()
 {
 }
 
-Command* InputHandler::handleInput(char key,KeyStatus status)
+Command* InputHandler::HandleInput(char key,KeyStatus status)
 {
 	switch (status)
 	{
@@ -26,6 +26,23 @@ Command* InputHandler::handleInput(char key,KeyStatus status)
 		if (key == 'f')return keyUp_f;
 		break;
 	}
+	return nullptr;
+}
+
+Command * InputHandler::HandleAI(const AIState state)
+{
+	switch (state)
+	{
+	case AIState::IDLE:
+		return idle;
+	case AIState::MOVE_LEFT:
+		return moveLeft;
+	case AIState::MOVE_RIGHT:
+		return moveRight;
+	}
+
+
+
 	return nullptr;
 }
 

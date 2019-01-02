@@ -6084,23 +6084,23 @@ namespace lodepng
 
 #ifdef LODEPNG_COMPILE_PNG
 
-	State::State()
+	PlayerState::PlayerState()
 	{
 		lodepng_state_init(this);
 	}
 
-	State::State(const State& other)
+	PlayerState::PlayerState(const PlayerState& other)
 	{
 		lodepng_state_init(this);
 		lodepng_state_copy(this, &other);
 	}
 
-	State::~State()
+	PlayerState::~PlayerState()
 	{
 		lodepng_state_cleanup(this);
 	}
 
-	State& State::operator=(const State& other)
+	PlayerState& PlayerState::operator=(const PlayerState& other)
 	{
 		lodepng_state_copy(this, &other);
 		return *this;
@@ -6115,7 +6115,7 @@ namespace lodepng
 		unsigned error = lodepng_decode_memory(&buffer, &w, &h, in, insize, colortype, bitdepth);
 		if (buffer && !error)
 		{
-			State state;
+			PlayerState state;
 			state.info_raw.colortype = colortype;
 			state.info_raw.bitdepth = bitdepth;
 			size_t buffersize = lodepng_get_raw_size(w, h, &state.info_raw);
@@ -6132,7 +6132,7 @@ namespace lodepng
 	}
 
 	unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
-		State& state,
+		PlayerState& state,
 		const unsigned char* in, size_t insize)
 	{
 		unsigned char* buffer = NULL;
@@ -6147,7 +6147,7 @@ namespace lodepng
 	}
 
 	unsigned decode(std::vector<unsigned char>& out, unsigned& w, unsigned& h,
-		State& state,
+		PlayerState& state,
 		const std::vector<unsigned char>& in)
 	{
 		return decode(out, w, h, state, in.empty() ? 0 : &in[0], in.size());
@@ -6190,7 +6190,7 @@ namespace lodepng
 
 	unsigned encode(std::vector<unsigned char>& out,
 		const unsigned char* in, unsigned w, unsigned h,
-		State& state)
+		PlayerState& state)
 	{
 		unsigned char* buffer;
 		size_t buffersize;
@@ -6205,7 +6205,7 @@ namespace lodepng
 
 	unsigned encode(std::vector<unsigned char>& out,
 		const std::vector<unsigned char>& in, unsigned w, unsigned h,
-		State& state)
+		PlayerState& state)
 	{
 		if (lodepng_get_raw_size(w, h, &state.info_raw) > in.size()) return 84;
 		return encode(out, in.empty() ? 0 : &in[0], w, h, state);

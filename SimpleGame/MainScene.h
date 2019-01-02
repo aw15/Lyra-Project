@@ -2,11 +2,17 @@
 
 #include "object.h"
 class InputHandler;
+class Slime;
+class Player;
+
 class MainScene
 {
 	Renderer *renderer;
 	InputHandler* inputHandler;
-	Object *testObject;
+	Player *player;
+	Slime *slime;
+
+
 	PhysicsEngine physics;
 public:
 	MainScene();

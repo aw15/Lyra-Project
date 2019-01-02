@@ -3,11 +3,6 @@
 #include "object.h"
 
 
-
-
-
-
-
 Object::Object(Renderer * renderer)
 {
 	this->renderer = renderer;

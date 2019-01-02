@@ -11,11 +11,8 @@ Player::Player(Renderer * renderer) : Object(renderer)
 	maxAnimationX = 1;
 	maxAnimationY = 1;
 	animationTime = 0.0f;
-	playerState = State::IDLE;
+	playerState = PlayerState::IDLE;
 	SetGraphic(IDLE_IMAGE);
-
-	
-
 }
 
 
@@ -23,7 +20,7 @@ Player::~Player()
 {
 }
 
-void Player::Init()
+void Player::InitPhysics()
 {
 	physics = new PhysicsComponent(position,width, height);
 }
@@ -45,7 +42,7 @@ void Player::Update()
 
 void Player::HandleInput(const char key, KeyStatus status)
 {
-	Command* command = inputHandler.handleInput(key,status);
+	Command* command = inputHandler.HandleInput(key,status);
 
 	if (command)
 		command->Execute(*this);
@@ -54,7 +51,7 @@ void Player::HandleInput(const char key, KeyStatus status)
 void Player::Move(const Vector3D & dir)
 {
 
-	if (playerState != State::AIRATTACK)
+	if (playerState != PlayerState::AIRATTACK)
 	{
 		this->dir.x = dir.x;
 		this->dir.y = dir.y;
@@ -65,7 +62,7 @@ void Player::Move(const Vector3D & dir)
 
 void Player::Idle()
 {
-	playerState = State::IDLE;
+	playerState = PlayerState::IDLE;
 	dir.x = 0;
 	dir.y= 0;
 	SetGraphic(IDLE_IMAGE);
@@ -73,9 +70,9 @@ void Player::Idle()
 
 void Player::AirAttack()
 {
-	if (playerState != State::RUN)
+	if (playerState != PlayerState::RUN)
 	{
-		playerState = State::AIRATTACK;
+		playerState = PlayerState::AIRATTACK;
 		dir.x = 0;
 		dir.y = 0;
 		SetGraphic(AIR_ATTACK_IMAGE);
