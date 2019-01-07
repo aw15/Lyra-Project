@@ -7,12 +7,13 @@
 Slime::Slime(Renderer * renderer) : Object(renderer)
 {
 
-	width = 1;
-	height = 1;
+	width = 2;
+	height = 2;
 	speed = { 0.1f,0.1f,0 };
 	maxAnimationX = 1;
 	maxAnimationY = 1;
 	animationTime = 0.0f;
+
 	slimeState = AIState::IDLE;
 	SetGraphic(IDLE_IMAGE);
 }
@@ -24,17 +25,22 @@ Slime::~Slime()
 
 void Slime::InitPhysics()
 {
-
-	physics = new PhysicsComponent(position, width, height);
+	InitialValuePhysics physicsData;
+	physicsData.height = height/3;
+	physicsData.width = width/4;
+	physicsData.groupIndex = ENEMY_GROUP;
+	physicsData.position = position;
+	physics = new PhysicsComponent(physicsData);
 }
 
 void Slime::Draw()
 {
 	Vector3D pixelpos;
 	physics->GetPosition(pixelpos);
+
 	pixelpos.ToPixel();
 
-	renderer->DrawTexturedRectSeq(pixelpos, TOPIXEL(width*height), color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY, 0.1);
+	renderer->DrawTexturedRectSeqXY(pixelpos, TOPIXEL(width), TOPIXEL(height), color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY, 0.1);
 }
 
 void Slime::Update()

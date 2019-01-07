@@ -5,9 +5,9 @@
 Player::Player(Renderer * renderer) : Object(renderer)
 {
 
-	width = 1;
-	height = 1;
-	speed = { 0.1f,0.1f,0 };
+	width = 1.7;
+	height = 1.7;
+	speed = { 1.f,1.f,0 };
 	maxAnimationX = 1;
 	maxAnimationY = 1;
 	animationTime = 0.0f;
@@ -18,11 +18,18 @@ Player::Player(Renderer * renderer) : Object(renderer)
 
 Player::~Player()
 {
+
 }
 
 void Player::InitPhysics()
 {
-	physics = new PhysicsComponent(position,width, height);
+	InitialValuePhysics physicsData;
+	physicsData.height = height;
+	physicsData.width = width;
+	physicsData.groupIndex = PLAYER_GROUP;
+	physicsData.position = position;
+
+	physics = new PhysicsComponent(physicsData);
 }
 
 void Player::Draw()
@@ -31,7 +38,7 @@ void Player::Draw()
 	physics->GetPosition(pixelpos);
 	pixelpos.ToPixel();
 
-	renderer->DrawTexturedRectSeq(pixelpos, TOPIXEL(width*height), color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY,0.1);
+	renderer->DrawTexturedRectSeqXY(pixelpos, TOPIXEL(width), TOPIXEL(height), color, renderer->GetTexture(currentImageName.c_str()), ((int)animationTime) % maxAnimationX, 0, maxAnimationX, maxAnimationY,0.1);
 }
 
 void Player::Update()

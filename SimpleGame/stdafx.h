@@ -15,19 +15,17 @@ using namespace std;
 
 #define WIDTH 500
 #define HEIGHT 500
-/////////////////////PHYSICS//////////////////////////////////////
-#define PLAYER_GROUP -1
-#define ENEMY_GROUP -2
-#define GRAVITY -9.8f
-const float PPM_RATIO  = 100.f;
+
 const float UPDATE_FREQUENCY{ 1.f / 60.f };
 //PLAYER_IMAGE
 #define IDLE_IMAGE 0b0000'0001u
 #define RUN_IMAGE 0b0000'0010u
 #define AIR_ATTACK_IMAGE 0b000'0100u
 
-#define TOPIXEL(x) (round(x*PPM_RATIO))
+#define TOPIXEL(x) (x*PPM_RATIO)
 #define TOMETER(x) (x/PPM_RATIO)
+const float PPM_RATIO = 50.f;
+
 #define TurnOn(a,b) a |= b
 #define TurnOff(a,b) a &=~b
 
@@ -100,8 +98,21 @@ struct Vector2D
 	float x = 0;
 	float y = 0;
 };
+//Physics//
+struct InitialValuePhysics
+{
+	Vector3D position;
+	float width;
+	float height;
+	int groupIndex;
+	
+};
 
-
+#define PLAYER_GROUP -1
+#define ENEMY_GROUP -2
+#define GRAVITY -9.8f
+#define FRICTION 0.2f
+////////
 #include "renderer.h"
 #include"PhysicsEngine.h"
 #include"PhysicsComponent.h"

@@ -15,9 +15,8 @@ MainScene::MainScene()
 
 	slime = new Slime(renderer);
 	//위치 설정 후에 물리효과를 실행할것.
-	slime->SetPosition(100, 0, 0);
+	slime->SetPosition(2, 0, 0);
 	slime->InitPhysics();
-
 }
 
 MainScene::~MainScene()
@@ -46,7 +45,7 @@ void MainScene::Update(float time)
 {
 	PhysicsEngine::Update();
 	player->Update();
-	slime->Update();
+	//slime->Update();
 }
 
 void MainScene::KeyUpInput(unsigned char key)

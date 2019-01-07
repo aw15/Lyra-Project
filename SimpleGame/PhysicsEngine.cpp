@@ -32,40 +32,12 @@ void PhysicsEngine::Initialize()
 	b2Vec2 a;
 	b2Vec2 b;
 	a.x = TOMETER(-WIDTH / 2.0f);
-	a.y = TOMETER(-HEIGHT / 2.0f) + 0.3f;
+	a.y = TOMETER(-HEIGHT / 2.0f);
 
 	b.x = TOMETER(WIDTH / 2.0f);
-	b.y = TOMETER(-HEIGHT / 2.0f) + 0.3f;
+	b.y = TOMETER(-HEIGHT / 2.0f);
 	groundEdge.Set(a,b);
 	groundBody->CreateFixture(&boxShapeDef);
-
-	//// 왼쪽
-
-	//groundEdge.Set(b2Vec2(0, 0), b2Vec2(0, winSize.height / PTM_RATIO));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
-
-	//// 위쪽
-
-	//groundEdge.Set(b2Vec2(0, winSize.height / PTM_RATIO),
-
-	//	b2Vec2(winSize.width / PTM_RATIO, winSize.height / PTM_RATIO));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
-
-	//// 오른쪽
-
-	//groundEdge.Set(b2Vec2(winSize.width / PTM_RATIO, winSize.height / PTM_RATIO),
-
-	//	b2Vec2(winSize.width / PTM_RATIO, 0));
-
-	//groundBody->CreateFixture(&boxShapeDef);
-
-
 }
 
 void PhysicsEngine::Update()

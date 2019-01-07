@@ -2,22 +2,32 @@
 #include "PhysicsComponent.h"
 
 
-PhysicsComponent::PhysicsComponent(const Vector3D& position, const float width, const float height)
+PhysicsComponent::PhysicsComponent(const InitialValuePhysics& data)
 {
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
 
-	bodyDef.position.Set(TOMETER(position.x), TOMETER(position.y));
+	bodyDef.position.Set(data.position.x, data.position.y);
+
 	body = PhysicsEngine::world.CreateBody(&bodyDef);
-	dynamicBox.SetAsBox(TOMETER(width) / 2, TOMETER(height) / 2);
+	dynamicBox.SetAsBox(data.width/2, data.height/2);
+	float area = (data.width * 2)*(data.height * 2)*100;//100 for tranlating m to cm;
 
 	b2FixtureDef fixtureDef;
-	fixtureDef.filter.groupIndex = PLAYER_GROUP;
+	fixtureDef.filter.groupIndex = data.groupIndex;
 	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
+	float mass = body->GetMass();
+	fixtureDef.density = mass/ area;
+	fixtureDef.friction = FRICTION;
 
 	body->ResetMassData();//설정한 Density에 맞게 mass 조정
+
+	//b2MassData mass;
+	//body->GetMassData(&mass);
+	//mass.mass = 1;
+	//body->SetMassData(&mass);
+
+
 	fixture = body->CreateFixture(&fixtureDef);
 }
 
@@ -34,11 +44,12 @@ void PhysicsComponent::Update(const Vector3D & dir,const Vector3D& speed)
 	force.y = dir.y*speed.y*UPDATE_FREQUENCY;
 	body->ApplyForce(force, body->GetWorldCenter(), true);
 
+
 	auto vel = body->GetLinearVelocity();
-	if (vel.x > 0.1f)
-		vel.x = 0.1f;
-	else if(vel.x< -0.1f)
-		vel.x = -0.1f;
+	if (vel.x > 1.f)
+		vel.x = 1.f;
+	else if(vel.x< -1.f)
+		vel.x = -1.f;
 	body->SetLinearVelocity(vel);
 
 }
