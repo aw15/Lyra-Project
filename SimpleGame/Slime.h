@@ -19,7 +19,11 @@ public:
 	void SetGraphic(const unsigned int image);
 	////////////////////////GET///////////////////////////////////////
 
-
+//PHYSICS//
+	virtual void BeginContact(b2Fixture* otherObjectFixture) override final;
+	virtual void EndContact(b2Fixture* otherObjectFixture)override final;
+	virtual void PreSolve(b2Fixture* otherObjectFixture, const b2Manifold* oldManifold)override final;
+	virtual void PostSolve(b2Fixture* otherObjectFixture, const b2ContactImpulse* impulse)override final;
 private:
 	int maxAnimationX;
 	int maxAnimationY;

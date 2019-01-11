@@ -98,15 +98,7 @@ struct Vector2D
 	float x = 0;
 	float y = 0;
 };
-//Physics//
-struct InitialValuePhysics
-{
-	Vector3D position;
-	float width;
-	float height;
-	int groupIndex;
-	
-};
+
 
 #define PLAYER_GROUP -1
 #define ENEMY_GROUP -2
@@ -114,10 +106,11 @@ struct InitialValuePhysics
 #define FRICTION 0.2f
 ////////
 #include "renderer.h"
+#include"object.h"
 #include"PhysicsEngine.h"
 #include"PhysicsComponent.h"
 #include"InputHandler.h"
-#include"object.h"
+
 
 
 

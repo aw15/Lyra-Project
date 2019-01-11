@@ -27,7 +27,8 @@ void PhysicsEngine::Initialize()
 	b2EdgeShape groundEdge;
 	b2FixtureDef boxShapeDef;
 	boxShapeDef.shape = &groundEdge;
-
+	boxShapeDef.userData = nullptr;
+	
 	//À§ÂÊ
 	b2Vec2 a;
 	b2Vec2 b;

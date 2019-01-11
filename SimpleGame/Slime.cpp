@@ -13,7 +13,7 @@ Slime::Slime(Renderer * renderer) : Object(renderer)
 	maxAnimationX = 1;
 	maxAnimationY = 1;
 	animationTime = 0.0f;
-
+	hp = 100;
 	slimeState = AIState::IDLE;
 	SetGraphic(IDLE_IMAGE);
 }
@@ -30,6 +30,7 @@ void Slime::InitPhysics()
 	physicsData.width = width/4;
 	physicsData.groupIndex = ENEMY_GROUP;
 	physicsData.position = position;
+	physicsData.object = this;
 	physics = new PhysicsComponent(physicsData);
 }
 
@@ -92,4 +93,20 @@ void Slime::SetGraphic(const unsigned int image)
 		maxAnimationX = 4;
 		break;
 	}
+}
+
+void Slime::BeginContact(b2Fixture * otherObjectFixture)
+{
+}
+
+void Slime::EndContact(b2Fixture * otherObjectFixture)
+{
+}
+
+void Slime::PreSolve(b2Fixture * otherObjectFixture, const b2Manifold * oldManifold)
+{
+}
+
+void Slime::PostSolve(b2Fixture * otherObjectFixture, const b2ContactImpulse * impulse)
+{
 }

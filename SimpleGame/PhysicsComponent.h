@@ -1,4 +1,15 @@
 #pragma once
+
+//Physics//
+struct InitialValuePhysics
+{
+	Vector3D position;
+	float width;
+	float height;
+	int groupIndex;
+	Object* object;
+};
+
 class PhysicsComponent
 {
 public:
