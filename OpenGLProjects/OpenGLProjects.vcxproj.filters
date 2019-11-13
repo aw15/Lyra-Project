@@ -19,6 +19,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{2bf8dfff-f8d4-43c9-8499-73552a49f83c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{c58cc2b9-bd24-45c3-91dc-2176ba154348}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -30,8 +33,14 @@
     <ClCompile Include="Renderer.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshObject.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicObject.cpp">
+      <Filter>Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,8 +53,14 @@
     <ClInclude Include="Renderer.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="Mesh.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshObject.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

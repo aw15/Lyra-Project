@@ -1,98 +1,34 @@
 #include"stdafx.h"
 #include"Renderer.h"
-#include "Object.h"
+#include "BasicObject.h"
+
+#define SPHERE_INDEX 0
+#define CONE_INDEX 1
+#define CYLINDER_INDEX 2
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
+Renderer* renderer;
+vector<BasicObject*> objectList;
+auto prevTime = chrono::high_resolution_clock::now();
 
-static const float cube_vertices[] = {
-	/* front surface is blue */
-	-0.5,  0.5, 0.5,
-	-0.5, -0.5, 0.5,
-	 0.5, -0.5, 0.5,
-	 0.5,  0.5, 0.5,
-	 /* left surface is green */
-	 -0.5,  0.5,  0.5,
-	 -0.5,  0.5, -0.5,
-	 -0.5, -0.5, -0.5,
-	 -0.5, -0.5,  0.5,
-	 /* top surface is red */
-	 -0.5, 0.5, 0.5,
-	  0.5, 0.5, 0.5,
-	  0.5, 0.5, -0.5,
-	 -0.5, 0.5, -0.5,
-	 /* right surface is yellow */
-	  0.5,  0.5, -0.5,
-	  0.5,  0.5,  0.5,
-	  0.5, -0.5,  0.5,
-	  0.5, -0.5, -0.5,
-	  /* back surface is cyan */
-	  -0.5,  0.5, -0.5,
-	   0.5,  0.5, -0.5,
-	   0.5, -0.5, -0.5,
-	  -0.5, -0.5, -0.5,
-	  /* bottom surface is magenta */
-	  -0.5, -0.5, -0.5,
-	  -0.5, -0.5,  0.5,
-	   0.5, -0.5,  0.5,
-	   0.5, -0.5, -0.5,
-};
+int CurrentShape = 0;
 
 
 void Keyboard(unsigned char key, int x, int y)
 {
-	//switch (key) {
-
-	//case 'f': //도형그리기모드변경
-	//	if (polygonMode == false) {
-	//		glPolygonMode(GL_FRONT, GL_LINE);
-	//		polygonMode = true;
-	//	}
-	//	else {
-	//		glPolygonMode(GL_FRONT, GL_FILL);
-	//		polygonMode = false;
-	//	}
-	//	break;
-
-	//case 'm': //4개의 사각형이 시계반대방향으로 이동 (밖으로 나가지않는다.)
-	//	if (isMove != true) {
-
-	//		isMove = true;
-	//	}
-	//	break;
-
-	//case 's': // 멈추기
-	//	isMove = false;
-	//	break;
-
-	//case 'c'://사각형의 색상바꾸기
-	//	srand(time(NULL));
-	//	colors[triangleIndex * 3] = { rand() / (float)RAND_MAX,rand() / (float)RAND_MAX, rand() / (float)RAND_MAX };
-	//	colors[triangleIndex * 3 + 1] = { rand() / (float)RAND_MAX,rand() / (float)RAND_MAX, rand() / (float)RAND_MAX };
-	//	colors[triangleIndex * 3 + 2] = { rand() / (float)RAND_MAX,rand() / (float)RAND_MAX, rand() / (float)RAND_MAX };
-
-	//	triangleIndex += 1;
-	//	triangleIndex %= 4;
-	//	break;
-
-	//case 'q':
-	//	glutDestroyWindow(WIN);
-	//	break;
-	//}
+	case key = ''
 }
 
 
 
-Renderer* renderer;
 
-vector<Object*> objectList;
-ObjectDesc objDesc;
 
 void Initialize()
 {
 	InitDesc desc;
-	desc.height = WIDTH;
+	desc.width = WIDTH;
 	desc.height = HEIGHT;
 	desc.vertexShaderPath = "vertex.glsl";
 	desc.pixelShaderPath = "pixel.glsl";
@@ -101,22 +37,29 @@ void Initialize()
 	renderer->SetViewMatrix({ 0,0,-10 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
 
-	auto tempObject = new Object();
+	auto tempObject = new BasicObject();
+	BasicObjectDesc objDesc;
+	objDesc.basicType = BasicShapeType::SPHERE;
+	objDesc.primitiveType = GLU_LINE;
+	tempObject->Initialize(objDesc, renderer, { 0,0,0}, { 0,0,0 }, {0.1,0.1,0.1});
+	objectList.push_back(tempObject);
 
-	objDesc.mesh.vertex.push_back({ 0, 0.5, 0 });
-	objDesc.mesh.vertex.push_back({ -1, 0, 0 });
-	objDesc.mesh.vertex.push_back({1, 0, 0});
+	tempObject = new BasicObject();
+	objDesc;
+	objDesc.basicType = BasicShapeType::CONE;
+	objDesc.primitiveType = GLU_LINE;
+	tempObject->Initialize(objDesc, renderer, { 0,0,0 }, { 0,0,0 }, { 1,1,1 });
+	objectList.push_back(tempObject);
 
-	objDesc.mesh.color.push_back({ 1, 1, 0 });
-	objDesc.mesh.color.push_back({ 1, 0, 0 });
-	objDesc.mesh.color.push_back({ 1, 0, 0 });
-
-	tempObject->Initialize(objDesc);
-
+	tempObject = new BasicObject();
+	objDesc;
+	objDesc.basicType = BasicShapeType::CYLINDER;
+	objDesc.primitiveType = GLU_LINE;
+	tempObject->Initialize(objDesc, renderer, { 0,0,0 }, { 0,0,0 }, { 1,1,1 });
 	objectList.push_back(tempObject);
 }
 
-void main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
+int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
 { //--- 윈도우 생성하기
 	glutInit(&argc, argv); // glut 초기화
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // 디스플레이 모드 설정
@@ -136,12 +79,15 @@ void main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 
 	Initialize();
 
-
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
 	glutMainLoop(); // 이벤트 처리 시작 
+
+	return true;
 }
+
+GLUquadricObj* qobj = gluNewQuadric();
 
 GLvoid drawScene() // 콜백 함수: 출력 
 {
@@ -151,50 +97,13 @@ GLvoid drawScene() // 콜백 함수: 출력
 
 	glUseProgram(renderer->ShaderProgramID);
 
-	//GLuint vao;
-	//GLuint vbo[2];
-	//// VAO 를지정하고할당하기 
-	//glGenVertexArrays(1, &vao);
-	//// VAO를바인드하기 
-	//glBindVertexArray(vao);
+	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
+	prevTime = chrono::high_resolution_clock::now();
 
-
-	//// 2개의 VBO를지정하고할당하기 
-	//glGenBuffers(2, vbo);
-	////--- 1번째 VBO를활성화하여바인드하고, 버텍스속성 (좌표값)을저장 
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	//for (auto data : objDesc.mesh.vertex)
-	//{
-	//	cout << data.x << endl;
-	//}
-
-	//// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)* objDesc.mesh.vertex.size(), &objDesc.mesh.vertex[0], GL_STATIC_DRAW);
-	//// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	//// attribute 인덱스 0번을사용가능하게함 
-	//glEnableVertexAttribArray(0);
-
-	////---2번째 VBO를활성화하여바인드하고, 버텍스속성 (색상)을저장 
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	//// 변수 colors에서버텍스색상을복사한다. 
-	//// colors 배열의사이즈: 9 *float 
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * objDesc.mesh.color.size() , &objDesc.mesh.color[0], GL_STATIC_DRAW);
-	//// 색상값을 attribute 인덱스 1번에명시한다: 버텍스당3*float 
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	//// attribute 인덱스 1번을사용가능하게함. 
-	//glEnableVertexAttribArray(1);
-	//glm::mat4 finalMatrix{};
-	//glUniformMatrix4fv(glGetUniformLocation(renderer->ShaderProgramID, "transform"), 1, GL_FALSE, glm::value_ptr(finalMatrix));
-
-	//glBindVertexArray(vao);
-	//glPointSize(10.0f);
-	//glDrawArrays(GL_POINTS, 0, 3);
-
-
-	for (auto& const data : objectList)
+	for (auto& data : objectList)
 	{
-		data->Render(renderer);
+		data->Update(diff.count());
+		data->Render();
 	}
 
 	

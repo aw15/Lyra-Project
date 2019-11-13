@@ -13,6 +13,8 @@ bool Renderer::Initialize()
 {
 	CompileShader();
 
+	basicObjectRenderer = gluNewQuadric();
+
 	return true;
 }
 
@@ -39,12 +41,32 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::DrawPrimitiveObject(const int primitiveType, GLuint vao, const int count)
+void Renderer::DrawMeshObject(const int primitiveType, GLuint vao, const int count)
 {
 	glBindVertexArray(vao);
 	glDrawArrays(primitiveType, 0, count);
-	
 }
+
+void Renderer::DrawBasicObject(BasicShapeType type, GLuint drawType)
+{
+	gluQuadricDrawStyle(basicObjectRenderer, drawType);
+	gluQuadricNormals(basicObjectRenderer, GLU_SMOOTH); //생략가능 
+	gluQuadricOrientation(basicObjectRenderer, GLU_OUTSIDE); //생략가능 
+	if (type == BasicShapeType::SPHERE)
+	{
+		gluSphere(basicObjectRenderer, 1, 20, 20);
+	}
+	else if (type == BasicShapeType::CONE)
+	{
+		gluCylinder(basicObjectRenderer,0.5, 0, 1, 20, 8);
+	}
+	else if (type == BasicShapeType::CYLINDER)
+	{
+		gluCylinder(basicObjectRenderer,0.5,0.5,1,20,8);
+	}
+}
+
+
 
 bool Renderer::CompileShader()
 {
@@ -92,4 +114,5 @@ bool Renderer::CompileShader()
 		return false;
 	}
 	glUseProgram(ShaderProgramID); //---만들어진세이더프로그램사용하기 // 여러개의프로그램만들수있고, 특정프로그램을사용하려면 // glUseProgram함수를호출하여사용할특정프로그램을지정한다. //
+	return true;
 }

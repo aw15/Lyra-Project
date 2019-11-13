@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <iostream>
+#include<chrono>
 
 //OpenGL
 #include <GL/glew.h>
@@ -12,23 +13,36 @@
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-//내가 만든 라이브러리
+
 
 
 using namespace std;
 
-
-
-
-struct Vector3D
-{
-	float x;
-	float y;
-	float z;
-};
-
 #define WIDTH 800
 #define HEIGHT 600
+
+
+
+enum class BasicShapeType
+{
+	SPHERE,
+	CONE,
+	CYLINDER
+};
+
+
+enum class ObjectType
+{
+	BasicType,
+	MeshType
+};
+
+
+struct BasicObjectDesc
+{
+	GLuint primitiveType = GL_TRIANGLES;
+	BasicShapeType basicType = BasicShapeType::SPHERE;
+};
 
 void convertDeviceXYOpneglXY(int x, int y, float* ox, float* oy) { // 윈도우좌표를 OpenGL좌표로 변환
 	int w = WIDTH;

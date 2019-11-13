@@ -12,6 +12,7 @@ struct InitDesc
 
 
 
+
 class Renderer
 {
 public:
@@ -23,15 +24,23 @@ public:
 
 
 
-	void DrawPrimitiveObject(const int primitiveType, GLuint vao,const int count);
+	void DrawMeshObject(const int primitiveType, GLuint vao,const int count);
+	void DrawBasicObject(BasicShapeType type, GLuint drawType);
 public:
 	InitDesc initDesc;
 	GLuint ShaderProgramID;
 
-private:
-	bool CompileShader();
-
 	glm::mat4 viewMatrix = glm::mat4{};
 	glm::mat4 projMatrix = glm::mat4{};
+
+
+
+private:
+	bool CompileShader();
+	GLUquadricObj* basicObjectRenderer;
+
+
+
 };
 
+//GLUquadricObj* Renderer::basicObjectRenderer = gluNewQuadric();
