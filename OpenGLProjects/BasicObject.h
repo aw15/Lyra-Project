@@ -13,6 +13,11 @@ public:
 	void Update(const double elapsedTime);
 	glm::mat4 GetFinalMatrix();
 
+	void Roll(float angle);
+	void Pitch(float angle);
+	void Yaw(float angle);
+	void Translate(glm::vec3 amount);
+
 private:
 	GLuint primitiveType = GLU_LINE;//어떤 프리미티브로 그릴건지
 	BasicShapeType basicType = BasicShapeType::SPHERE;

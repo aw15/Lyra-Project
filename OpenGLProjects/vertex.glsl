@@ -15,5 +15,5 @@ uniform mat4 u_transform;
 void main(void) { 
 	gl_Position =  u_transform * vec4(in_Position,1);
 
-	ex_Color = vec3(0, 0, 0);
+	ex_Color = in_Color;
 }

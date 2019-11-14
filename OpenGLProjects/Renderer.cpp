@@ -64,6 +64,10 @@ void Renderer::DrawBasicObject(BasicShapeType type, GLuint drawType)
 	{
 		gluCylinder(basicObjectRenderer,0.5,0.5,1,20,8);
 	}
+	else if (type == BasicShapeType::DISK)
+	{
+		gluDisk(basicObjectRenderer,0.5,2,20,20);
+	}
 }
 
 

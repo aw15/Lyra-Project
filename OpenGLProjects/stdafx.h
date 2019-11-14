@@ -27,7 +27,10 @@ enum class BasicShapeType
 {
 	SPHERE,
 	CONE,
-	CYLINDER
+	CYLINDER,
+	DISK,
+	CUBE,
+	PYRAMID
 };
 
 

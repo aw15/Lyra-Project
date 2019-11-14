@@ -1,27 +1,89 @@
 #include"stdafx.h"
 #include"Renderer.h"
 #include "BasicObject.h"
+#include"MeshObject.h"
+#include"Mesh.h"
 
-#define SPHERE_INDEX 0
-#define CONE_INDEX 1
-#define CYLINDER_INDEX 2
+#define LEFT_INDEX 0
+#define RIGHT_INDEX 1
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
 Renderer* renderer;
-vector<BasicObject*> objectList;
+vector<MeshObject*> objectList;
 auto prevTime = chrono::high_resolution_clock::now();
 
-int CurrentShape = 0;
+int g_currentShape = LEFT_INDEX;
+int g_drawType = GLU_LINE;
 
+
+auto cubeMesh = new Mesh();
+auto pyramidMesh = new Mesh();
+
+bool isRevoling = false;
 
 void Keyboard(unsigned char key, int x, int y)
 {
-	case key = ''
+
+	switch (key)
+	{
+	case 'x':
+		objectList[LEFT_INDEX]->SetRotationSpeed({ 20,0,0 });
+		break;
+	case 'X':
+		objectList[LEFT_INDEX]->SetRotationSpeed({ -20,0,0 });
+		break;
+	case 'y':
+		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0,20,0 });
+		break;
+	case 'Y':
+		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0,-20,0 });
+		break;
+	case 's':
+		objectList[LEFT_INDEX]->SetRotationSpeed({ 0,0,0 });
+		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 0,0 });
+		break;
+	case 'b':
+		objectList[LEFT_INDEX]->SetRotationSpeed({ 0, 20,0 });
+		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 20, 0 });
+		objectList[LEFT_INDEX]->Reset();
+		objectList[RIGHT_INDEX]->Reset();
+		isRevoling == false ? isRevoling = true : isRevoling = false;
+		if (!isRevoling)
+		{
+			objectList[LEFT_INDEX]->SetRotationSpeed({ 0, 0,0 });
+			objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 0, 0 });
+		}
+		break;
+	case 'c':
+		auto temp = objectList[LEFT_INDEX]->mesh;
+		objectList[LEFT_INDEX]->mesh = objectList[RIGHT_INDEX]->mesh;
+		objectList[RIGHT_INDEX]->mesh = temp;
+
+	}
+
 }
 
 
+void SpecialInput(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		//do something here
+		break;
+	case GLUT_KEY_DOWN:
+		//do something here
+		break;
+	case GLUT_KEY_LEFT:
+		//do something here
+		break;
+	case GLUT_KEY_RIGHT:
+		//do something here
+		break;
+	}
+}
 
 
 
@@ -37,25 +99,18 @@ void Initialize()
 	renderer->SetViewMatrix({ 0,0,-10 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
 
-	auto tempObject = new BasicObject();
+	cubeMesh->CreateCube();
+	pyramidMesh->CreatePyramid();
+
+	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
-	objDesc.basicType = BasicShapeType::SPHERE;
-	objDesc.primitiveType = GLU_LINE;
-	tempObject->Initialize(objDesc, renderer, { 0,0,0}, { 0,0,0 }, {0.1,0.1,0.1});
+	objDesc.primitiveType = GL_TRIANGLES;
+	tempObject->Initialize(objDesc, renderer, cubeMesh, { -0.8,0,0 }, { 0,0,0 }, { 0.1,0.1,0.1 });
 	objectList.push_back(tempObject);
 
-	tempObject = new BasicObject();
-	objDesc;
-	objDesc.basicType = BasicShapeType::CONE;
-	objDesc.primitiveType = GLU_LINE;
-	tempObject->Initialize(objDesc, renderer, { 0,0,0 }, { 0,0,0 }, { 1,1,1 });
-	objectList.push_back(tempObject);
-
-	tempObject = new BasicObject();
-	objDesc;
-	objDesc.basicType = BasicShapeType::CYLINDER;
-	objDesc.primitiveType = GLU_LINE;
-	tempObject->Initialize(objDesc, renderer, { 0,0,0 }, { 0,0,0 }, { 1,1,1 });
+	tempObject = new MeshObject();
+	objDesc.primitiveType = GL_TRIANGLES;
+	tempObject->Initialize(objDesc, renderer, pyramidMesh, { 0.8,0,0 }, { 0,0,0 }, { 0.1,0.1,0.1 });
 	objectList.push_back(tempObject);
 }
 
@@ -82,7 +137,10 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
+	glutSpecialFunc(SpecialInput);
 	glutMainLoop(); // 이벤트 처리 시작 
+
+
 
 	return true;
 }
@@ -96,17 +154,17 @@ GLvoid drawScene() // 콜백 함수: 출력
 	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
 	glUseProgram(renderer->ShaderProgramID);
+	glDisable(GL_CULL_FACE);
 
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
-	for (auto& data : objectList)
-	{
-		data->Update(diff.count());
-		data->Render();
-	}
+	objectList[LEFT_INDEX]->Update(diff.count(),isRevoling);
+	objectList[LEFT_INDEX]->Render();
+		
+	objectList[RIGHT_INDEX]->Update(diff.count(), isRevoling);
+	objectList[RIGHT_INDEX]->Render();
 
-	
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

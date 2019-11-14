@@ -50,3 +50,23 @@ glm::mat4 BasicObject::GetFinalMatrix()
 {
 	return position*rotation*scale;
 }
+
+void BasicObject::Roll(float angle)
+{
+	rotation = glm::rotate(rotation, glm::radians(angle), { 0,1,0 });
+}
+
+void BasicObject::Pitch(float angle)
+{
+	rotation = glm::rotate(rotation, glm::radians(angle), { 1,0,0 });
+}
+
+void BasicObject::Yaw(float angle)
+{
+	rotation = glm::rotate(rotation, glm::radians(angle), { 0,0,1 });
+}
+
+void BasicObject::Translate(glm::vec3 amount)
+{
+	position = glm::translate(position, amount);
+}

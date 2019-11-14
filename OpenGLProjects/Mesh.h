@@ -15,8 +15,14 @@ public:
 	~Mesh() = default;
 	void Render(Renderer* const renderer);
 	void CreateBasicObject(MeshType type);
+	void CreateCube();
+	void CreatePyramid();
 
+	GLuint GetVAO() const { return vao; };
 public:
+	int size = 0;
+
+private:
 
 	vector<glm::vec3> vertex;
 	vector<int> index;

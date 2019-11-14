@@ -26,6 +26,9 @@ public:
 
 	void DrawMeshObject(const int primitiveType, GLuint vao,const int count);
 	void DrawBasicObject(BasicShapeType type, GLuint drawType);
+
+
+
 public:
 	InitDesc initDesc;
 	GLuint ShaderProgramID;
