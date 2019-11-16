@@ -12,14 +12,14 @@ GLvoid Reshape(int w, int h);
 
 Renderer* renderer;
 vector<MeshObject*> objectList;
+unordered_map<string,Mesh*> meshMap;
+
+
 auto prevTime = chrono::high_resolution_clock::now();
 
 int g_currentShape = LEFT_INDEX;
+
 int g_drawType = GLU_LINE;
-
-
-auto cubeMesh = new Mesh();
-auto pyramidMesh = new Mesh();
 
 bool isRevoling = false;
 
@@ -29,7 +29,7 @@ void Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'x':
-		objectList[LEFT_INDEX]->SetRotationSpeed({ 20,0,0 });
+		objectList[LEFT_INDEX]->SetMovementSpeed({ 0,1,0 });
 		break;
 	case 'X':
 		objectList[LEFT_INDEX]->SetRotationSpeed({ -20,0,0 });
@@ -86,7 +86,6 @@ void SpecialInput(int key, int x, int y)
 }
 
 
-
 void Initialize()
 {
 	InitDesc desc;
@@ -96,22 +95,29 @@ void Initialize()
 	desc.pixelShaderPath = "pixel.glsl";
 	renderer = new Renderer{ desc };
 	renderer->Initialize();
-	renderer->SetViewMatrix({ 0,0,-10 }, { 0,0,0 }, { 0,1,0 });
+	renderer->SetViewMatrix({ 0,0,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
 
-	cubeMesh->CreateCube();
-	pyramidMesh->CreatePyramid();
+	meshMap["Cube"] = new Mesh();
+	meshMap["Pyramid"] = new Mesh();
+	meshMap["Triangle"] = new Mesh();
+	meshMap["Rectangle"] = new Mesh();
 
-	auto tempObject = new MeshObject();
+	meshMap["Cube"]->CreateCube();
+	meshMap["Pyramid"]->CreatePyramid();
+	meshMap["Triangle"]->CreateTriangle();
+	meshMap["Rectangle"]->CreateRectangle();
+
+	/*auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_TRIANGLES;
-	tempObject->Initialize(objDesc, renderer, cubeMesh, { -0.8,0,0 }, { 0,0,0 }, { 0.1,0.1,0.1 });
-	objectList.push_back(tempObject);
+	tempObject->Initialize(objDesc, renderer, meshMap["Triangle"], { -5,0,0 }, { 0,0,0 }, { 2.5,2.5,2.5 }, {1,1,0});
+	*//*objectList.push_back(tempObject);*/
 
-	tempObject = new MeshObject();
-	objDesc.primitiveType = GL_TRIANGLES;
-	tempObject->Initialize(objDesc, renderer, pyramidMesh, { 0.8,0,0 }, { 0,0,0 }, { 0.1,0.1,0.1 });
-	objectList.push_back(tempObject);
+	//tempObject = new MeshObject();
+	//objDesc.primitiveType = GL_TRIANGLES;
+	//tempObject->Initialize(objDesc, renderer, meshMap["Rectangle"], { 0.8,0,0 }, { 0,0,0 }, { 2.5,2.5,2.5 }, {-1,-1,0});
+	//objectList.push_back(tempObject);
 }
 
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
@@ -140,8 +146,6 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutSpecialFunc(SpecialInput);
 	glutMainLoop(); // 이벤트 처리 시작 
 
-
-
 	return true;
 }
 
@@ -149,7 +153,6 @@ GLUquadricObj* qobj = gluNewQuadric();
 
 GLvoid drawScene() // 콜백 함수: 출력 
 {
-
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
 	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
@@ -159,12 +162,41 @@ GLvoid drawScene() // 콜백 함수: 출력
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
-	objectList[LEFT_INDEX]->Update(diff.count(),isRevoling);
-	objectList[LEFT_INDEX]->Render();
-		
-	objectList[RIGHT_INDEX]->Update(diff.count(), isRevoling);
-	objectList[RIGHT_INDEX]->Render();
+	//objectList[LEFT_INDEX]->Update(diff.count(),isRevoling);
+	//objectList[LEFT_INDEX]->Render();
+	//	
+	//objectList[RIGHT_INDEX]->Update(diff.count(), isRevoling);
+	//objectList[RIGHT_INDEX]->Render();
 
+	static float timeAccumulator = 0.0f;
+	timeAccumulator += diff.count();
+	for (auto& data : objectList)
+	{
+		data->Update(diff.count());
+		data->Render();
+	}
+
+	if (timeAccumulator > 2.0) { //2초마다 객체 생성
+		auto tempObject = new MeshObject();
+		BasicObjectDesc objDesc;
+		objDesc.primitiveType = GL_TRIANGLES;
+		string meshName;
+		if (rand() % 10 > 4)
+			meshName = "Triangle";
+		else
+			meshName = "Rectangle";
+
+
+		if (rand()%10 > 4) {
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
+		}
+		else {
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -1,1,0 });
+
+		}
+		objectList.push_back(tempObject);
+		timeAccumulator = 0.0f;
+	}
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

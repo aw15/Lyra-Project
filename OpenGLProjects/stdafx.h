@@ -2,10 +2,11 @@
 #include<vector>
 #include<string>
 #include <cstdlib>
-#include <stdio.h>
+//#include <stdio.h>
 #include <iostream>
 #include<chrono>
-
+#include<cstdio>
+#include<unordered_map>
 //OpenGL
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -18,10 +19,8 @@
 
 using namespace std;
 
-#define WIDTH 800
-#define HEIGHT 600
-
-
+#define WIDTH 700
+#define HEIGHT 700
 
 enum class BasicShapeType
 {

@@ -8,10 +8,9 @@ public:
 	MeshObject();
 	~MeshObject();
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh);
-	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
+	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale,glm::vec3 movementSpeed);
 	void Render();
-	void Update(const double elapsedTime);
-	void Update(const double elapsedTime, bool isRevolveRotation);
+	void Update(const float elapsedTime);
 
 	glm::mat4 GetRevolveFinalMatrix() { return rotation * position * scale; };
 
@@ -26,6 +25,8 @@ public:
 	void Translate(glm::vec3 amount){position = glm::translate(position, amount);}
 
 	void SetRotationSpeed(const glm::vec3 rotationSpeed) { this->rotationSpeed = rotationSpeed; }
+	void SetMovementSpeed(const glm::vec3& movementSpeed) { this->movementSpeed = movementSpeed; }
+
 
 	void Reset() {
 		rotation = glm::mat4(1.0f);
@@ -38,6 +39,7 @@ private:
 	BasicShapeType basicType = BasicShapeType::SPHERE;
 
 	glm::vec3 rotationSpeed = glm::vec3(0,0,0);
+	glm::vec3 movementSpeed = glm::vec3(0, 0, 0);
 
 	glm::mat4 position = glm::mat4(1.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);

@@ -17,6 +17,8 @@ public:
 	void CreateBasicObject(MeshType type);
 	void CreateCube();
 	void CreatePyramid();
+	void CreateTriangle();
+	void CreateRectangle();
 
 	GLuint GetVAO() const { return vao; };
 public:
