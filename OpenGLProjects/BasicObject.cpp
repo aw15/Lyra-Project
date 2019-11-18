@@ -35,15 +35,15 @@ bool BasicObject::Initialize(const BasicObjectDesc & desc, Renderer * renderer, 
 void BasicObject::Render()
 {
 
-	renderer->DrawBasicObject(basicType, primitiveType);
+//	renderer->DrawBasicObject(basicType, primitiveType);
 }
 
 void BasicObject::Update(const double elapsedTime)
 {
 	//finalMatrix = renderer->projMatrix * renderer->viewMatrix *  GetFinalMatrix();
 	finalMatrix = GetFinalMatrix();
-	unsigned int modelLocation = glGetUniformLocation(renderer->ShaderProgramID, "u_transform");  //---버텍스세이더에서모델변환위치가져오기 
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+	//unsigned int modelLocation = glGetUniformLocation(renderer->ShaderProgramID, "u_transform");  //---버텍스세이더에서모델변환위치가져오기 
+//	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
 }
 
 glm::mat4 BasicObject::GetFinalMatrix()

@@ -12,6 +12,8 @@ GLvoid Reshape(int w, int h);
 
 Renderer* renderer;
 vector<MeshObject*> objectList;
+MeshObject lineObject;
+
 unordered_map<string,Mesh*> meshMap;
 
 
@@ -25,43 +27,6 @@ bool isRevoling = false;
 
 void Keyboard(unsigned char key, int x, int y)
 {
-
-	switch (key)
-	{
-	case 'x':
-		objectList[LEFT_INDEX]->SetMovementSpeed({ 0,1,0 });
-		break;
-	case 'X':
-		objectList[LEFT_INDEX]->SetRotationSpeed({ -20,0,0 });
-		break;
-	case 'y':
-		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0,20,0 });
-		break;
-	case 'Y':
-		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0,-20,0 });
-		break;
-	case 's':
-		objectList[LEFT_INDEX]->SetRotationSpeed({ 0,0,0 });
-		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 0,0 });
-		break;
-	case 'b':
-		objectList[LEFT_INDEX]->SetRotationSpeed({ 0, 20,0 });
-		objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 20, 0 });
-		objectList[LEFT_INDEX]->Reset();
-		objectList[RIGHT_INDEX]->Reset();
-		isRevoling == false ? isRevoling = true : isRevoling = false;
-		if (!isRevoling)
-		{
-			objectList[LEFT_INDEX]->SetRotationSpeed({ 0, 0,0 });
-			objectList[RIGHT_INDEX]->SetRotationSpeed({ 0, 0, 0 });
-		}
-		break;
-	case 'c':
-		auto temp = objectList[LEFT_INDEX]->mesh;
-		objectList[LEFT_INDEX]->mesh = objectList[RIGHT_INDEX]->mesh;
-		objectList[RIGHT_INDEX]->mesh = temp;
-
-	}
 
 }
 
@@ -91,10 +56,12 @@ void Initialize()
 	InitDesc desc;
 	desc.width = WIDTH;
 	desc.height = HEIGHT;
-	desc.vertexShaderPath = "vertex.glsl";
-	desc.pixelShaderPath = "pixel.glsl";
+
+
 	renderer = new Renderer{ desc };
-	renderer->Initialize();
+	renderer->AddShader("vertex.glsl", "pixel.glsl", "basic");
+	renderer->AddShader("lineVertex.glsl", "pixel.glsl", "line");
+
 	renderer->SetViewMatrix({ 0,0,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
 
@@ -102,22 +69,36 @@ void Initialize()
 	meshMap["Pyramid"] = new Mesh();
 	meshMap["Triangle"] = new Mesh();
 	meshMap["Rectangle"] = new Mesh();
+	meshMap["Line"] = new Mesh();
 
 	meshMap["Cube"]->CreateCube();
 	meshMap["Pyramid"]->CreatePyramid();
 	meshMap["Triangle"]->CreateTriangle();
 	meshMap["Rectangle"]->CreateRectangle();
+	meshMap["Line"]->CreateMeshByVertices({ {0,0,0},{1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
 
-	/*auto tempObject = new MeshObject();
+
 	BasicObjectDesc objDesc;
-	objDesc.primitiveType = GL_TRIANGLES;
-	tempObject->Initialize(objDesc, renderer, meshMap["Triangle"], { -5,0,0 }, { 0,0,0 }, { 2.5,2.5,2.5 }, {1,1,0});
-	*//*objectList.push_back(tempObject);*/
+	objDesc.primitiveType = GL_LINES;
 
-	//tempObject = new MeshObject();
-	//objDesc.primitiveType = GL_TRIANGLES;
-	//tempObject->Initialize(objDesc, renderer, meshMap["Rectangle"], { 0.8,0,0 }, { 0,0,0 }, { 2.5,2.5,2.5 }, {-1,-1,0});
-	//objectList.push_back(tempObject);
+	lineObject.Initialize(objDesc, renderer, meshMap["Line"]);
+}
+
+void CleanUp()
+{
+	for (auto& data : objectList)
+	{
+		delete data;
+	}
+
+	for (auto iter = meshMap.begin(); iter != meshMap.end(); iter++)
+	{
+		(*iter).second->Delete();
+		delete (*iter).second;
+	}
+
+	delete renderer;
+
 }
 
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
@@ -140,43 +121,63 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 
 	Initialize();
 
+	//glEnable(GL_DEPTH_TEST);
+	//glDepthFunc(GL_LESS);
+
+	glDisable(GL_CULL_FACE);
+
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
 	glutSpecialFunc(SpecialInput);
 	glutMainLoop(); // 이벤트 처리 시작 
 
+
+
+
+	CleanUp();//메모리 해제
+
 	return true;
 }
 
-GLUquadricObj* qobj = gluNewQuadric();
 
 GLvoid drawScene() // 콜백 함수: 출력 
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
 	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
-	glUseProgram(renderer->ShaderProgramID);
-	glDisable(GL_CULL_FACE);
+	glUseProgram(renderer->shaderProgramMap["basic"]);
+
 
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
-	//objectList[LEFT_INDEX]->Update(diff.count(),isRevoling);
-	//objectList[LEFT_INDEX]->Render();
-	//	
-	//objectList[RIGHT_INDEX]->Update(diff.count(), isRevoling);
-	//objectList[RIGHT_INDEX]->Render();
 
-	static float timeAccumulator = 0.0f;
-	timeAccumulator += diff.count();
+	static float shapeSpawnTime = 2.0f;
+
+	shapeSpawnTime += diff.count();
+
 	for (auto& data : objectList)
 	{
-		data->Update(diff.count());
+		data->Update(renderer->shaderProgramMap["basic"], diff.count());
 		data->Render();
 	}
 
-	if (timeAccumulator > 2.0) { //2초마다 객체 생성
+	glUseProgram(renderer->shaderProgramMap["line"]);
+	glm::vec3 start = { 5,5,0 };
+	glm::vec3 end =   {-5,-5,0 };
+	unsigned int location = glGetUniformLocation(renderer->shaderProgramMap["line"], "startPosition");
+	glUniform3fv(location, 1, glm::value_ptr(start));
+	location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
+	glUniform3fv(location, 1, glm::value_ptr(end));
+
+	lineObject.Update(renderer->shaderProgramMap["line"], diff.count());
+	lineObject.Render();
+
+
+	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
+
+
 		auto tempObject = new MeshObject();
 		BasicObjectDesc objDesc;
 		objDesc.primitiveType = GL_TRIANGLES;
@@ -195,8 +196,10 @@ GLvoid drawScene() // 콜백 함수: 출력
 
 		}
 		objectList.push_back(tempObject);
-		timeAccumulator = 0.0f;
+		shapeSpawnTime = 0.0f;
 	}
+
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

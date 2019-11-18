@@ -9,14 +9,6 @@ Renderer::Renderer(InitDesc initDesc)
 	this->initDesc = initDesc;
 }
 
-bool Renderer::Initialize()
-{
-	CompileShader();
-
-	basicObjectRenderer = gluNewQuadric();
-
-	return true;
-}
 
 void Renderer::SetViewMatrix(const glm::vec3& cameraPosition,const glm::vec3& lookDir,const glm::vec3& cameraUp)
 {
@@ -37,45 +29,12 @@ void Renderer::SetProjMatrix(float fov,float nearZ,float farZ)
 	);
 }
 
-Renderer::~Renderer()
+bool Renderer::AddShader(const string& vertexShaderPath, const string & pixelShaderPath, const string& shaderName)
 {
-}
+	GLuint ShaderProgramID;
 
-void Renderer::DrawMeshObject(const int primitiveType, GLuint vao, const int count)
-{
-	glBindVertexArray(vao);
-	glDrawArrays(primitiveType, 0, count);
-}
-
-void Renderer::DrawBasicObject(BasicShapeType type, GLuint drawType)
-{
-	gluQuadricDrawStyle(basicObjectRenderer, drawType);
-	gluQuadricNormals(basicObjectRenderer, GLU_SMOOTH); //생략가능 
-	gluQuadricOrientation(basicObjectRenderer, GLU_OUTSIDE); //생략가능 
-	if (type == BasicShapeType::SPHERE)
-	{
-		gluSphere(basicObjectRenderer, 1, 20, 20);
-	}
-	else if (type == BasicShapeType::CONE)
-	{
-		gluCylinder(basicObjectRenderer,0.5, 0, 1, 20, 8);
-	}
-	else if (type == BasicShapeType::CYLINDER)
-	{
-		gluCylinder(basicObjectRenderer,0.5,0.5,1,20,8);
-	}
-	else if (type == BasicShapeType::DISK)
-	{
-		gluDisk(basicObjectRenderer,0.5,2,20,20);
-	}
-}
-
-
-
-bool Renderer::CompileShader()
-{
-	auto vertexsource = filetobuf(initDesc.vertexShaderPath.c_str());
-	auto fragmentsource = filetobuf(initDesc.pixelShaderPath.c_str());
+	auto vertexsource = filetobuf(vertexShaderPath.c_str());
+	auto fragmentsource = filetobuf(pixelShaderPath.c_str());
 
 	//---버텍스세이더읽어저장하고컴파일하기 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -117,6 +76,20 @@ bool Renderer::CompileShader()
 		cerr << "ERROR: shader program 연결실패\n" << errorLog << endl;
 		return false;
 	}
-	glUseProgram(ShaderProgramID); //---만들어진세이더프로그램사용하기 // 여러개의프로그램만들수있고, 특정프로그램을사용하려면 // glUseProgram함수를호출하여사용할특정프로그램을지정한다. //
+
+	shaderProgramMap[shaderName] = ShaderProgramID;
+
 	return true;
 }
+
+Renderer::~Renderer()
+{
+}
+
+void Renderer::DrawMeshObject(const int primitiveType, GLuint vao, const int count)
+{
+	glBindVertexArray(vao);
+	glDrawArrays(primitiveType, 0, count);
+}
+
+

@@ -19,8 +19,11 @@ public:
 	void CreatePyramid();
 	void CreateTriangle();
 	void CreateRectangle();
+	void CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<glm::vec3>& colors);
 
 	GLuint GetVAO() const { return vao; };
+
+	void Delete();
 public:
 	int size = 0;
 
