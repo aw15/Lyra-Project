@@ -19,11 +19,10 @@ unordered_map<string,Mesh*> meshMap;
 
 auto prevTime = chrono::high_resolution_clock::now();
 
-int g_currentShape = LEFT_INDEX;
-
-int g_drawType = GLU_LINE;
-
-bool isRevoling = false;
+condition_variable condVar;
+unique_lock<mutex> gameThreadLock;
+bool isReady = false;
+std::mutex mutex_;
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -53,6 +52,8 @@ void SpecialInput(int key, int x, int y)
 
 void Initialize()
 {
+
+
 	InitDesc desc;
 	desc.width = WIDTH;
 	desc.height = HEIGHT;
@@ -78,6 +79,27 @@ void Initialize()
 	meshMap["Line"]->CreateMeshByVertices({ {0,0,0},{1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
 
 
+
+	//auto tempObject = new MeshObject();
+	//BasicObjectDesc objDesc;
+	//objDesc.primitiveType = GL_TRIANGLES;
+	//string meshName;
+	//if (rand() % 10 > 4)
+	//	meshName = "Triangle";
+	//else
+	//	meshName = "Rectangle";
+
+
+	//if (rand() % 10 > 4) {
+	//	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
+	//}
+	//else {
+	//	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -1,1,0 });
+
+	//}
+	//objectList.push_back(tempObject);
+
+
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_LINES;
 
@@ -99,6 +121,51 @@ void CleanUp()
 
 	delete renderer;
 
+}
+
+
+float shapeSpawnTime = 2.0f;
+
+void GameThread(float timeDiff, std::promise<bool>* p)
+{
+	srand(time(NULL));
+
+
+	shapeSpawnTime += timeDiff;
+
+	for (auto& data : objectList)
+	{
+		data->Update(timeDiff);
+	}
+
+
+
+
+	lineObject.Update(timeDiff);
+
+	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
+		auto tempObject = new MeshObject();
+		BasicObjectDesc objDesc;
+		objDesc.primitiveType = GL_TRIANGLES;
+		string meshName;
+		if (rand() % 10 > 4)
+			meshName = "Triangle";
+		else
+			meshName = "Rectangle";
+
+
+		if (rand() % 10 > 4) {
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
+		}
+		else {
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -1,1,0 });
+		}
+
+		objectList.push_back(tempObject);
+		shapeSpawnTime = 0.0f;
+	}
+
+	p->set_value(true);
 }
 
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
@@ -124,6 +191,8 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	//glEnable(GL_DEPTH_TEST);
 	//glDepthFunc(GL_LESS);
 
+
+
 	glDisable(GL_CULL_FACE);
 
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
@@ -146,21 +215,30 @@ GLvoid drawScene() // 콜백 함수: 출력
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
 	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
-	glUseProgram(renderer->shaderProgramMap["basic"]);
-
-
-	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
+	std::chrono::duration<double> timeDiff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
 
-	static float shapeSpawnTime = 2.0f;
+	std::promise<bool> p;
 
-	shapeSpawnTime += diff.count();
+	// 미래에 string 데이터를 돌려 주겠다는 약속.
+	std::future<bool> data = p.get_future();
+
+
+	thread gameThread(GameThread, timeDiff.count(), &p);
+	gameThread.join();
+
+	// 미래에 약속된 데이터를 받을 때 까지 기다린다.
+	data.wait();
+
+
+
+	glUseProgram(renderer->shaderProgramMap["basic"]);
+
 
 	for (auto& data : objectList)
 	{
-		data->Update(renderer->shaderProgramMap["basic"], diff.count());
-		data->Render();
+		data->Render(renderer->shaderProgramMap["basic"]);
 	}
 
 	glUseProgram(renderer->shaderProgramMap["line"]);
@@ -171,33 +249,7 @@ GLvoid drawScene() // 콜백 함수: 출력
 	location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
 	glUniform3fv(location, 1, glm::value_ptr(end));
 
-	lineObject.Update(renderer->shaderProgramMap["line"], diff.count());
-	lineObject.Render();
-
-
-	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
-
-
-		auto tempObject = new MeshObject();
-		BasicObjectDesc objDesc;
-		objDesc.primitiveType = GL_TRIANGLES;
-		string meshName;
-		if (rand() % 10 > 4)
-			meshName = "Triangle";
-		else
-			meshName = "Rectangle";
-
-
-		if (rand()%10 > 4) {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
-		}
-		else {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -1,1,0 });
-
-		}
-		objectList.push_back(tempObject);
-		shapeSpawnTime = 0.0f;
-	}
+	lineObject.Render(renderer->shaderProgramMap["line"]);
 
 
 	glutSwapBuffers();

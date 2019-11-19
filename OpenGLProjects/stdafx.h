@@ -14,13 +14,16 @@
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
+#include<thread>
+#include<mutex>
+#include<future>
 
 
 using namespace std;
 
 #define WIDTH 700
 #define HEIGHT 700
+#define UPDATE_RATIO 16
 
 enum class BasicShapeType
 {

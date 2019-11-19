@@ -9,8 +9,8 @@ public:
 	~MeshObject();
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh);
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, glm::vec3 movementSpeed);
-	void Render();
-	void Update(const GLuint shaderID, const float elapsedTime);
+	void Render(const GLuint shaderID);
+	void Update( const float elapsedTime);
 
 	glm::mat4 GetRevolveFinalMatrix() { return rotation * position * scale; };
 
