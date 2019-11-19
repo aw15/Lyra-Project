@@ -159,8 +159,8 @@ GLvoid drawScene() // 콜백 함수: 출력
 
 	for (auto& data : objectList)
 	{
-		data->Update(renderer->shaderProgramMap["basic"], diff.count());
-		data->Render();
+		data->Update( diff.count());
+		data->Render(renderer->shaderProgramMap["basic"]);
 	}
 
 	glUseProgram(renderer->shaderProgramMap["line"]);
@@ -171,8 +171,8 @@ GLvoid drawScene() // 콜백 함수: 출력
 	location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
 	glUniform3fv(location, 1, glm::value_ptr(end));
 
-	lineObject.Update(renderer->shaderProgramMap["line"], diff.count());
-	lineObject.Render();
+	lineObject.Update( diff.count());
+	lineObject.Render(renderer->shaderProgramMap["line"]);
 
 
 	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
