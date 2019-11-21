@@ -16,9 +16,9 @@ uniform mat4 u_transform;
 
 void main(void) { 
     if(gl_VertexID == 0)
-		gl_Position =  u_transform * vec4(startPosition,1);
+		gl_Position =   vec4(startPosition,1);
 	if(gl_VertexID == 1)
-		gl_Position =  u_transform * vec4(endPosition,1);
+		gl_Position =   vec4(endPosition,1);
 	
 
 

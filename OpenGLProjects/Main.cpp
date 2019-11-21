@@ -25,11 +25,12 @@ int g_drawType = GLU_LINE;
 
 bool isRevoling = false;
 
+float mouseSX, mouseSY, mouseEX, mouseEY;
+
 void Keyboard(unsigned char key, int x, int y)
 {
 
 }
-
 
 void SpecialInput(int key, int x, int y)
 {
@@ -75,7 +76,7 @@ void Initialize()
 	meshMap["Pyramid"]->CreatePyramid();
 	meshMap["Triangle"]->CreateTriangle();
 	meshMap["Rectangle"]->CreateRectangle();
-	meshMap["Line"]->CreateMeshByVertices({ {0,0,0},{1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
+	meshMap["Line"]->CreateMeshByVertices({ {0,0,0}, {1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
 
 
 	BasicObjectDesc objDesc;
@@ -100,7 +101,34 @@ void CleanUp()
 	delete renderer;
 
 }
+int lineVertex = 0;
+bool isLineComplete = false;
 
+void Mouse(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{//좌표계변환
+		float ox;
+		float oy;
+		convertDeviceXYOpneglXY(x, y, &ox, &oy);
+		cout << lineVertex << endl;
+		if (lineVertex == 0) {
+			mouseSX = ox;
+			mouseSY = oy;
+			lineVertex++;
+		}
+		else if(lineVertex == 1) {
+			mouseEX = ox;
+			mouseEY = oy;
+			lineVertex--;
+			isLineComplete = true;
+		}
+		
+	}
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+		isLineComplete = false;
+	}
+
+}
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
 { //--- 윈도우 생성하기
 	glutInit(&argc, argv); // glut 초기화
@@ -129,11 +157,9 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
+	glutMouseFunc(Mouse);
 	glutSpecialFunc(SpecialInput);
 	glutMainLoop(); // 이벤트 처리 시작 
-
-
-
 
 	CleanUp();//메모리 해제
 
@@ -164,15 +190,20 @@ GLvoid drawScene() // 콜백 함수: 출력
 	}
 
 	glUseProgram(renderer->shaderProgramMap["line"]);
-	glm::vec3 start = { 5,5,0 };
-	glm::vec3 end =   {-5,-5,0 };
-	unsigned int location = glGetUniformLocation(renderer->shaderProgramMap["line"], "startPosition");
-	glUniform3fv(location, 1, glm::value_ptr(start));
-	location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
-	glUniform3fv(location, 1, glm::value_ptr(end));
+	if (isLineComplete == true) {
+		glm::vec3 start = { mouseSX,mouseSY,0 };
+		glm::vec3 end = { mouseEX,mouseEY,0 };
 
-	lineObject.Update( diff.count());
-	lineObject.Render(renderer->shaderProgramMap["line"]);
+		unsigned int location = glGetUniformLocation(renderer->shaderProgramMap["line"], "startPosition");
+		glUniform3fv(location, 1, glm::value_ptr(start));
+		location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
+		glUniform3fv(location, 1, glm::value_ptr(end));
+
+		lineObject.Update(diff.count());
+		lineObject.Render(renderer->shaderProgramMap["line"]);
+	}
+
+
 
 
 	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
@@ -187,7 +218,7 @@ GLvoid drawScene() // 콜백 함수: 출력
 		else
 			meshName = "Rectangle";
 
-
+		//랜덤하게 객체생성
 		if (rand()%10 > 4) {
 			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
 		}
@@ -200,6 +231,7 @@ GLvoid drawScene() // 콜백 함수: 출력
 	}
 
 
+	
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

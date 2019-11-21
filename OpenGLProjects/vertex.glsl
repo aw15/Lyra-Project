@@ -7,7 +7,7 @@
 in  vec3 in_Position; // 위치속성
 in  vec3 in_Color;
 
-out vec3 ex_Color; // 프래그먼트세이더에게전달
+out vec3 ex_Color; 
 
 //  이 값은 한 매쉬동안은 상수적입니다.  
 uniform mat4 u_transform;
