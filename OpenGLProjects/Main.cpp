@@ -25,7 +25,7 @@ int g_drawType = GLU_LINE;
 
 bool isRevoling = false;
 
-float mouseSX, mouseSY, mouseEX, mouseEY;
+float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -104,25 +104,23 @@ void CleanUp()
 int lineVertex = 0;
 bool isLineComplete = false;
 
+void MousDrag(int x,int y) {
+	float ox;
+	float oy;
+	isLineComplete = true;
+	convertDeviceXYOpneglXY(x, y, &ox, &oy);
+
+	mouseEndX = ox;
+	mouseEndY = oy;
+}
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{//좌표계변환
 		float ox;
 		float oy;
-		convertDeviceXYOpneglXY(x, y, &ox, &oy);
-		cout << lineVertex << endl;
-		if (lineVertex == 0) {
-			mouseSX = ox;
-			mouseSY = oy;
-			lineVertex++;
-		}
-		else if(lineVertex == 1) {
-			mouseEX = ox;
-			mouseEY = oy;
-			lineVertex--;
-			isLineComplete = true;
-		}
-		
+		convertDeviceXYOpneglXY(x, y, &ox, &oy);		
+		mouseStartX = ox;
+		mouseStartY = oy;
 	}
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 		isLineComplete = false;
@@ -158,6 +156,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
+	glutMotionFunc(MousDrag);
 	glutSpecialFunc(SpecialInput);
 	glutMainLoop(); // 이벤트 처리 시작 
 
@@ -191,8 +190,8 @@ GLvoid drawScene() // 콜백 함수: 출력
 
 	glUseProgram(renderer->shaderProgramMap["line"]);
 	if (isLineComplete == true) {
-		glm::vec3 start = { mouseSX,mouseSY,0 };
-		glm::vec3 end = { mouseEX,mouseEY,0 };
+		glm::vec3 start = { mouseStartX,mouseStartY,0 };
+		glm::vec3 end = { mouseEndX,mouseEndY,0 };
 
 		unsigned int location = glGetUniformLocation(renderer->shaderProgramMap["line"], "startPosition");
 		glUniform3fv(location, 1, glm::value_ptr(start));
@@ -202,8 +201,6 @@ GLvoid drawScene() // 콜백 함수: 출력
 		lineObject.Update(diff.count());
 		lineObject.Render(renderer->shaderProgramMap["line"]);
 	}
-
-
 
 
 	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
