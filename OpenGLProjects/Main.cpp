@@ -54,6 +54,38 @@ void SpecialInput(int key, int x, int y)
 
 void Initialize()
 {
+	//서더랜드 알고리즘 테스트////////////////////////////////////////////////////////////////////////////
+	float poly_size = 3;
+	vector<glm::vec2> poly_points = { {100,150}, {200,250},
+							  {300,200} };
+
+	// Defining clipper polygon vertices in clockwise order 
+	// 1st Example with square clipper 
+	float clipper_size = 4;
+	vector<glm::vec2> clipper_points= { {150,0}, {150,1000},
+							  {1200,1200}, {1200,0} };
+
+	suthHodgClip(poly_points, poly_size, clipper_points,
+		clipper_size);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	//CyrusBeck 알고리즘///////////////////////////////////////////////////////////////////////////////////
+	glm::vec2 vertices[]
+		= { {200, 50},
+			{250, 100},
+			{200, 150} };
+
+	// Make sure that the vertices 
+	// are put in a clockwise order 
+	int n = sizeof(vertices) / sizeof(vertices[0]);
+	glm::vec2 line[] = { {10, 10} , {450, 200} };
+
+	vector<glm::vec2> result;
+	auto r = CyrusBeck(vertices, line, n, result);
+	///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 	InitDesc desc;
 	desc.width = WIDTH;
 	desc.height = HEIGHT;
@@ -84,6 +116,7 @@ void Initialize()
 
 	lineObject.Initialize(objDesc, renderer, meshMap["Line"]);
 }
+
 
 void CleanUp()
 {
@@ -116,15 +149,21 @@ void MousDrag(int x,int y) {
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{//좌표계변환
+
+
 		float ox;
 		float oy;
 		convertDeviceXYOpneglXY(x, y, &ox, &oy);		
 		mouseStartX = ox;
 		mouseStartY = oy;
+
+		cout << ox << " " << oy << endl;
 	}
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 		isLineComplete = false;
 	}
+
+
 
 }
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
@@ -237,4 +276,5 @@ GLvoid Reshape(int w, int h) // 콜백 함수: 다시 그리기
 {
 	glViewport(0, 0, w, h);
 }
+
 

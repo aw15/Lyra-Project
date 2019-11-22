@@ -26,12 +26,11 @@ public:
 	void Delete();
 public:
 	int size = 0;
+	vector<glm::vec3> vertices;
 
 private:
-
-	vector<glm::vec3> vertex;
 	vector<int> index;
-	vector<glm::vec3> color;
+	vector<glm::vec3> colors;
 
 	GLuint  vao;
 	GLuint  vbo[2];
