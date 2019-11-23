@@ -27,10 +27,45 @@ bool isRevoling = false;
 
 float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
 
+bool isPolygonMode = false;
+int window;
+float speedX = 1;
+float speedY = 1;
+bool isLineComplete = false;
+
 void Keyboard(unsigned char key, int x, int y)
 {
+	switch (key) {
 
+	case 'f': //도형그리기모드변경
+		if (isPolygonMode == false) {
+			glPolygonMode(GL_FRONT, GL_LINE);
+			isPolygonMode = true;
+		}
+		else {
+			glPolygonMode(GL_FRONT, GL_FILL);
+			isPolygonMode = false;
+		}
+		break;
+		//날라오는 경로 출력	
+
+
+	case '+'://날라오는속도 증가.
+		speedX = speedX + 0.5;
+		speedY = speedY + 0.5;
+		break;
+
+	case '-': // 속도 감소
+		speedX = speedX - 0.5;
+		speedY = speedY - 0.5;
+		break;
+
+	case 'q': // 종료
+		glutDestroyWindow(window);
+		break;
+	}
 }
+
 
 void SpecialInput(int key, int x, int y)
 {
@@ -70,20 +105,20 @@ void Initialize()
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	//CyrusBeck 알고리즘///////////////////////////////////////////////////////////////////////////////////
-	glm::vec2 vertices[]
-		= { {200, 50},
-			{250, 100},
-			{200, 150} };
+	////CyrusBeck 알고리즘///////////////////////////////////////////////////////////////////////////////////
+	//glm::vec2 vertices[]
+	//	= { {200, 50},
+	//		{250, 100},
+	//		{220, 30} };
 
-	// Make sure that the vertices 
-	// are put in a clockwise order 
-	int n = sizeof(vertices) / sizeof(vertices[0]);
-	glm::vec2 line[] = { {10, 10} , {450, 200} };
+	//// Make sure that the vertices 
+	//// are put in a clockwise order 
+	//int n = sizeof(vertices) / sizeof(vertices[0]);
+	//glm::vec2 line[] = { {10, 10} , {200, 200} };
 
-	vector<glm::vec2> result;
-	auto r = CyrusBeck(vertices, line, n, result);
-	///////////////////////////////////////////////////////////////////////////////////////////////////////
+	//vector<glm::vec2> result;
+	//auto r = CyrusBeck(vertices, line, n, result);
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 	InitDesc desc;
@@ -134,8 +169,6 @@ void CleanUp()
 	delete renderer;
 
 }
-int lineVertex = 0;
-bool isLineComplete = false;
 
 void MousDrag(int x,int y) {
 	float ox;
@@ -148,8 +181,8 @@ void MousDrag(int x,int y) {
 }
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{//좌표계변환
-
+	{
+		//좌표계변환
 
 		float ox;
 		float oy;
@@ -172,7 +205,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // 디스플레이 모드 설정
 	glutInitWindowPosition(0, 0); // 윈도우의 위치 지정
 	glutInitWindowSize(WIDTH, HEIGHT); // 윈도우의 크기 지정
-	auto window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
+	window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
 
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
@@ -256,10 +289,10 @@ GLvoid drawScene() // 콜백 함수: 출력
 
 		//랜덤하게 객체생성
 		if (rand()%10 > 4) {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { 1,1,0 });
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { speedX,speedY,0 });
 		}
 		else {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -1,1,0 });
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -speedX,speedY,0 });
 
 		}
 		objectList.push_back(tempObject);

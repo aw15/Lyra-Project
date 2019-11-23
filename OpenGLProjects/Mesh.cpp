@@ -265,7 +265,10 @@ void Mesh::CreateRectangle()
 	vertices.push_back({ 0.5,0.5,0 });
 	vertices.push_back({ 0.5,0.5,0 });
 	vertices.push_back({ -0.5,-0.5,0 });
-	vertices.push_back({ -0.5,-0.5,0 });
+	vertices.push_back({ 0.5,-0.5,0 });
+	
+	
+	
 
 	size = vertices.size();
 
