@@ -41,9 +41,13 @@ bool MeshObject::Initialize(const BasicObjectDesc & desc, Renderer * renderer, M
 
 void MeshObject::Render(const GLuint shaderID)
 {
+
 	unsigned int modelLocation = glGetUniformLocation(shaderID, "u_transform");  //---버텍스세이더에서모델변환위치가져오기 
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
-	renderer->DrawMeshObject(primitiveType,mesh->GetVAO(),mesh->size);
+	if (mesh)
+	{
+		renderer->DrawMeshObject(primitiveType, mesh->GetVAO(), mesh->size);
+	}
 }
 
 void MeshObject::Update( const float elapsedTime)
@@ -54,7 +58,7 @@ void MeshObject::Update( const float elapsedTime)
 	Pitch(rotationSpeed.y * elapsedTime);
 	Yaw(rotationSpeed.z * elapsedTime);
 
-	finalMatrix = renderer->projMatrix * renderer->viewMatrix *  GetFinalMatrix();
+	finalMatrix =   GetFinalMatrix();
 
 }
 

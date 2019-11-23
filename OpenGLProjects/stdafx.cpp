@@ -1,5 +1,8 @@
 ﻿#include "stdafx.h"
 
+
+
+
 void convertDeviceXYOpneglXY(int x, int y, float * ox, float * oy)
 { // 윈도우좌표를 OpenGL좌표로 변환
 	int w = WIDTH;
@@ -46,7 +49,7 @@ float y_intersect(float x1, float y1, float x2, float y2,
 
 // This functions clips all the edges w.r.t one clip 
 // edge of clipping area 
-void clip(vector<glm::vec2>& poly_points, int& poly_size,
+void clip(vector<glm::vec3>& poly_points, int& poly_size,
 	float x1, float y1, float x2, float y2)
 {
 	float new_points[20][2];
@@ -124,7 +127,7 @@ void clip(vector<glm::vec2>& poly_points, int& poly_size,
 }
 
 // Implements Sutherland–Hodgman algorithm 
-void suthHodgClip(vector<glm::vec2> poly_points, int poly_size,
+void suthHodgClip(vector<glm::vec3> poly_points, int poly_size,
 	vector<glm::vec2>& clipper_points, int clipper_size)
 {
 	poly_points.resize(20);
@@ -170,7 +173,7 @@ float min(vector<float> t)
 
 // Cyrus Beck function, returns a pair of values 
 // that are then displayed as a line 
-bool CyrusBeck(glm::vec2 vertices[],
+bool CyrusBeck(vector<glm::vec3>& vertices,
 	glm::vec2 line[], int n, vector<glm::vec2>& result)
 {
 
@@ -210,7 +213,7 @@ bool CyrusBeck(glm::vec2 vertices[],
 	// Calculating the numerator and denominators 
 	// using the dot function 
 	for (int i = 0; i < n; i++) {
-		numerator[i] = dot(normal[i], P0_PEi[i]);
+		numerator[i] = dot(normal[i],  P0_PEi[i]);
 		denominator[i] = dot(normal[i], P1_P0);
 	}
 
@@ -265,7 +268,7 @@ bool CyrusBeck(glm::vec2 vertices[],
 	newPair[1].y
 		= (float)line[0].y
 		+ (float)P1_P0.y * (float)temp[1];
-	cout << '(' << newPair[0].x << ", "
+	std::cout << '(' << newPair[0].x << ", "
 		<< newPair[0].y << ") ("
 		<< newPair[1].x << ", "
 		<< newPair[1].y << ")";
@@ -278,3 +281,15 @@ bool CyrusBeck(glm::vec2 vertices[],
 
 	return true;
 }
+
+void Print(const glm::vec4 & param)
+{
+	std::cout << param.x << " " << param.y << " " << param.z << endl;
+}
+
+void Print(const glm::vec2 & param)
+{
+	std::cout << param.x << " " << param.y << endl;
+}
+
+

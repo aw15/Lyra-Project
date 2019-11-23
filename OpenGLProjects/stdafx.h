@@ -23,12 +23,6 @@ using namespace std;
 #define HEIGHT 700
 
 
-#define INSIDE 0
-#define LEFT 1
-#define RIGHT 2
-#define BOTTOM 4
-#define TOP 8
-
 enum class BasicShapeType
 {
 	SPHERE,
@@ -57,9 +51,15 @@ void convertDeviceXYOpneglXY(int x, int y, float* ox, float* oy);
 
 char* filetobuf(const char *file);
 
-void suthHodgClip(vector<glm::vec2> poly_points, int poly_size,
+void suthHodgClip(vector<glm::vec3> poly_points, int poly_size,
 	vector<glm::vec2>& clipper_points, int clipper_size);
 
 
-bool CyrusBeck(glm::vec2 vertices[],
+bool CyrusBeck(vector<glm::vec3>& vertices,
 	glm::vec2 line[], int n, vector<glm::vec2>& result);
+
+
+
+
+void Print(const glm::vec4& param);
+void Print(const glm::vec2& param);

@@ -90,6 +90,7 @@ void Renderer::DrawMeshObject(const int primitiveType, GLuint vao, const int cou
 {
 	glBindVertexArray(vao);
 	glDrawArrays(primitiveType, 0, count);
+
 }
 
 

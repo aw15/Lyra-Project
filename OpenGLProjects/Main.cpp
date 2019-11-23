@@ -1,17 +1,24 @@
-#include"stdafx.h"
+ï»¿#include"stdafx.h"
 #include"Renderer.h"
 #include "BasicObject.h"
 #include"MeshObject.h"
 #include"Mesh.h"
+#include"Physics.h"
 
 #define LEFT_INDEX 0
 #define RIGHT_INDEX 1
+
+#define TOP_DOWN 0b1100
+#define LEFT_RIGHT 0b0011
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 
 Renderer* renderer;
+Physics physics;
 vector<MeshObject*> objectList;
+vector<Mesh*> meshes;
+
 MeshObject lineObject;
 
 unordered_map<string,Mesh*> meshMap;
@@ -37,7 +44,7 @@ void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
 
-	case 'f': //µµÇü±×¸®±â¸ğµåº¯°æ
+	case 'f': //ë„í˜•ê·¸ë¦¬ê¸°ëª¨ë“œë³€ê²½
 		if (isPolygonMode == false) {
 			glPolygonMode(GL_FRONT, GL_LINE);
 			isPolygonMode = true;
@@ -47,20 +54,20 @@ void Keyboard(unsigned char key, int x, int y)
 			isPolygonMode = false;
 		}
 		break;
-		//³¯¶ó¿À´Â °æ·Î Ãâ·Â	
+		//ë‚ ë¼ì˜¤ëŠ” ê²½ë¡œ ì¶œë ¥	
 
 
-	case '+'://³¯¶ó¿À´Â¼Óµµ Áõ°¡.
+	case '+'://ë‚ ë¼ì˜¤ëŠ”ì†ë„ ì¦ê°€.
 		speedX = speedX + 0.5;
 		speedY = speedY + 0.5;
 		break;
 
-	case '-': // ¼Óµµ °¨¼Ò
+	case '-': // ì†ë„ ê°ì†Œ
 		speedX = speedX - 0.5;
 		speedY = speedY - 0.5;
 		break;
 
-	case 'q': // Á¾·á
+	case 'q': // ì¢…ë£Œ
 		glutDestroyWindow(window);
 		break;
 	}
@@ -89,35 +96,37 @@ void SpecialInput(int key, int x, int y)
 
 void Initialize()
 {
-	//¼­´õ·£µå ¾Ë°í¸®Áò Å×½ºÆ®////////////////////////////////////////////////////////////////////////////
-	float poly_size = 3;
-	vector<glm::vec2> poly_points = { {100,150}, {200,250},
-							  {300,200} };
+	//ì„œë”ëœë“œ ì•Œê³ ë¦¬ì¦˜ í…ŒìŠ¤íŠ¸////////////////////////////////////////////////////////////////////////////
+	//float poly_size = 3;
+	//vector<glm::vec3> poly_points = { {0,50,0}, {-50,0,0},
+	//						  {50,0,0} };
 
-	// Defining clipper polygon vertices in clockwise order 
-	// 1st Example with square clipper 
-	float clipper_size = 4;
-	vector<glm::vec2> clipper_points= { {150,0}, {150,1000},
-							  {1200,1200}, {1200,0} };
+	//// Defining clipper polygon vertices in clockwise order 
+	//// 1st Example with square clipper 
+	//float clipper_size = 4;
+	//vector<glm::vec2> clipper_points= { {0,100}, {0,-100},
+	//						  {1200,-100}, {1200,100} };
 
-	suthHodgClip(poly_points, poly_size, clipper_points,
-		clipper_size);
+	//suthHodgClip(poly_points, poly_size, clipper_points,
+	//	clipper_size);
+
+	//physics.SetCohenSutherlandTarget({ -0.5,-0.5,0 }, { 0.5,0.5,0 });
+	//physics.CohenSutherlandClip(0, 100, 0, -100);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	////CyrusBeck ¾Ë°í¸®Áò///////////////////////////////////////////////////////////////////////////////////
-	//glm::vec2 vertices[]
-	//	= { {200, 50},
-	//		{250, 100},
-	//		{220, 30} };
+	////CyrusBeck ì•Œê³ ë¦¬ì¦˜///////////////////////////////////////////////////////////////////////////////////
+	//vector<glm::vec3> vertices
+	//	= { {200, 50, 0},
+	//		{250, 100, 0},
+	//		{200, 150, 0},{100,150,0},{50,100,0},{100,50,0} };
 
 	//// Make sure that the vertices 
 	//// are put in a clockwise order 
-	//int n = sizeof(vertices) / sizeof(vertices[0]);
-	//glm::vec2 line[] = { {10, 10} , {200, 200} };
+	//glm::vec2 line[] = { {150, 0} , {150,500} };
 
 	//vector<glm::vec2> result;
-	//auto r = CyrusBeck(vertices, line, n, result);
+	//auto r = CyrusBeck(vertices, line, vertices.size(), result);
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -146,7 +155,25 @@ void Initialize()
 	meshMap["Line"]->CreateMeshByVertices({ {0,0,0}, {1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
 
 
+	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
+	objDesc.primitiveType = GL_TRIANGLES;
+	string meshName;
+	meshName = "Rectangle";
+
+	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 0,0,0 }, { 0,0,0 }, { 0.5,0.5,0});
+	
+	objectList.push_back(tempObject);
+
+	tempObject = new MeshObject();
+	objDesc.primitiveType = GL_TRIANGLES;
+	meshName = "Rectangle";
+
+	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -100,0,0 }, { 0,0,0 }, { 0.5,0.5,0 });
+
+	objectList.push_back(tempObject);
+	
+
 	objDesc.primitiveType = GL_LINES;
 
 	lineObject.Initialize(objDesc, renderer, meshMap["Line"]);
@@ -179,10 +206,12 @@ void MousDrag(int x,int y) {
 	mouseEndX = ox;
 	mouseEndY = oy;
 }
+
+
 void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		//ÁÂÇ¥°èº¯È¯
+		//ì¢Œí‘œê³„ë³€í™˜
 
 		float ox;
 		float oy;
@@ -190,26 +219,112 @@ void Mouse(int button, int state, int x, int y) {
 		mouseStartX = ox;
 		mouseStartY = oy;
 
-		cout << ox << " " << oy << endl;
+		//cout << ox << " " << oy << endl;
 	}
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
 		isLineComplete = false;
+
+
+
+		for (auto iter = objectList.begin() ; iter != objectList.end();iter++)
+		{
+			vector<glm::vec3> result;
+			int clipDir = 0;
+
+			glm::vec4 min = objectList[0]->GetFinalMatrix() * glm::vec4{ objectList[0]->mesh->vertices[1],0 };
+			glm::vec4 max = objectList[0]->GetFinalMatrix() *glm::vec4{ objectList[0]->mesh->vertices[2],0 };
+			physics.SetCohenSutherlandTarget(min, max);
+			physics.CohenSutherlandClip(mouseStartX, mouseStartY, mouseEndX, mouseEndY, result, clipDir);
+
+			if (result.size() == 2)
+			{
+				auto mesh1 = new Mesh;
+				auto mesh2 = new Mesh;
+
+				auto object1 = new MeshObject();
+				auto object2 = new MeshObject();
+				BasicObjectDesc objDesc;
+				glm::vec3 color1{ 1,0,0 };
+				glm::vec3 color2{ 0,1,0 };
+
+				if (clipDir == TOP_DOWN)
+				{
+
+					
+					mesh1->CreateMeshByVertices(
+						{ glm::vec3{min.x,min.y,0}, glm::vec3{min.x,max.y,0}, result[0],result[0], result[1], min },
+						{ color1,color1,color1, color1, color1, color1 }
+					);
+
+					mesh2->CreateMeshByVertices(
+						{ result[0], max, result[1], result[1], {max.x,min.y,0}, max },
+						{color2,color2,color2,color2,color2, color2}
+
+					);
+
+
+
+					objDesc.primitiveType = GL_TRIANGLES;
+					object1->Initialize(objDesc, renderer, mesh1, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, {0,-0.1,0});
+
+					(*iter)->isActive = false;
+					meshes.push_back(mesh1);
+					meshes.push_back(mesh2);
+					objectList.push_back(object1);
+
+					object2->Initialize(objDesc, renderer, mesh2, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.05,0 });
+					objectList.push_back(object2);
+	
+				}
+				if (clipDir == LEFT_RIGHT)
+				{
+					mesh1->CreateMeshByVertices(
+						{ glm::vec3{min.x,min.y,0}, result[0],result[1], result[1],{max.x,min.y,0}, min },
+						{ color1,color1,color1, color1, color1, color1 }
+					);
+
+					mesh2->CreateMeshByVertices(
+						{ result[0], result[1], max , max, {min.x,max.y,0}, result[0] },
+						{ color2,color2,color2,color2,color2, color2 }
+
+					);
+
+
+
+					objDesc.primitiveType = GL_TRIANGLES;
+					object1->Initialize(objDesc, renderer, mesh1, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.1,0 });
+
+					(*iter)->isActive = false;
+					meshes.push_back(mesh1);
+					meshes.push_back(mesh2);
+					objectList.push_back(object1);
+
+					object2->Initialize(objDesc, renderer, mesh2, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.05,0 });
+					objectList.push_back(object2);
+				}
+
+
+				break;
+			}
+		}
+
+
 	}
 
 
 
 }
-int main(int argc, char** argv) // À©µµ¿ì Ãâ·ÂÇÏ°í Äİ¹éÇÔ¼ö ¼³Á¤ 
-{ //--- À©µµ¿ì »ı¼ºÇÏ±â
-	glutInit(&argc, argv); // glut ÃÊ±âÈ­
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // µğ½ºÇÃ·¹ÀÌ ¸ğµå ¼³Á¤
-	glutInitWindowPosition(0, 0); // À©µµ¿ìÀÇ À§Ä¡ ÁöÁ¤
-	glutInitWindowSize(WIDTH, HEIGHT); // À©µµ¿ìÀÇ Å©±â ÁöÁ¤
-	window = glutCreateWindow("Example1"); // À©µµ¿ì »ı¼º(À©µµ¿ì ÀÌ¸§)
+int main(int argc, char** argv) // ìœˆë„ìš° ì¶œë ¥í•˜ê³  ì½œë°±í•¨ìˆ˜ ì„¤ì • 
+{ //--- ìœˆë„ìš° ìƒì„±í•˜ê¸°
+	glutInit(&argc, argv); // glut ì´ˆê¸°í™”
+	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // ë””ìŠ¤í”Œë ˆì´ ëª¨ë“œ ì„¤ì •
+	glutInitWindowPosition(0, 0); // ìœˆë„ìš°ì˜ ìœ„ì¹˜ ì§€ì •
+	glutInitWindowSize(WIDTH, HEIGHT); // ìœˆë„ìš°ì˜ í¬ê¸° ì§€ì •
+	window = glutCreateWindow("Example1"); // ìœˆë„ìš° ìƒì„±(ìœˆë„ìš° ì´ë¦„)
 
-	//--- GLEW ÃÊ±âÈ­ÇÏ±â
+	//--- GLEW ì´ˆê¸°í™”í•˜ê¸°
 	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) // glew ÃÊ±âÈ­
+	if (glewInit() != GLEW_OK) // glew ì´ˆê¸°í™”
 	{
 		std::cerr << "Unable to initialize GLEW" << std::endl;
 		exit(EXIT_FAILURE);
@@ -224,24 +339,24 @@ int main(int argc, char** argv) // À©µµ¿ì Ãâ·ÂÇÏ°í Äİ¹éÇÔ¼ö ¼³Á¤
 
 	glDisable(GL_CULL_FACE);
 
-	glutDisplayFunc(drawScene); // Ãâ·Â ÇÔ¼öÀÇ ÁöÁ¤
-	glutReshapeFunc(Reshape); // ´Ù½Ã ±×¸®±â ÇÔ¼ö ÁöÁ¤
+	glutDisplayFunc(drawScene); // ì¶œë ¥ í•¨ìˆ˜ì˜ ì§€ì •
+	glutReshapeFunc(Reshape); // ë‹¤ì‹œ ê·¸ë¦¬ê¸° í•¨ìˆ˜ ì§€ì •
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
 	glutMotionFunc(MousDrag);
 	glutSpecialFunc(SpecialInput);
-	glutMainLoop(); // ÀÌº¥Æ® Ã³¸® ½ÃÀÛ 
+	glutMainLoop(); // ì´ë²¤íŠ¸ ì²˜ë¦¬ ì‹œì‘ 
 
-	CleanUp();//¸Ş¸ğ¸® ÇØÁ¦
+	CleanUp();//ë©”ëª¨ë¦¬ í•´ì œ
 
 	return true;
 }
 
 
-GLvoid drawScene() // Äİ¹é ÇÔ¼ö: Ãâ·Â 
+GLvoid drawScene() // ì½œë°± í•¨ìˆ˜: ì¶œë ¥ 
 {
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // ±âº» Èò»ö
-	glClear(GL_COLOR_BUFFER_BIT); // ¼³Á¤µÈ »öÀ¸·Î ÀüÃ¼¸¦ Ä¥ÇÏ±â
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // ê¸°ë³¸ í°ìƒ‰
+	glClear(GL_COLOR_BUFFER_BIT); // ì„¤ì •ëœ ìƒ‰ìœ¼ë¡œ ì „ì²´ë¥¼ ì¹ í•˜ê¸°
 
 	glUseProgram(renderer->shaderProgramMap["basic"]);
 
@@ -256,9 +371,15 @@ GLvoid drawScene() // Äİ¹é ÇÔ¼ö: Ãâ·Â
 
 	for (auto& data : objectList)
 	{
-		data->Update( diff.count());
-		data->Render(renderer->shaderProgramMap["basic"]);
+		if (data->isActive)
+		{
+			data->Update(diff.count());
+			data->Render(renderer->shaderProgramMap["basic"]);
+		}
 	}
+
+	
+
 
 	glUseProgram(renderer->shaderProgramMap["line"]);
 	if (isLineComplete == true) {
@@ -275,27 +396,28 @@ GLvoid drawScene() // Äİ¹é ÇÔ¼ö: Ãâ·Â
 	}
 
 
-	if (shapeSpawnTime > 2.0) { //2ÃÊ¸¶´Ù °´Ã¼ »ı¼º
+	if (shapeSpawnTime > 2.0) { //2ì´ˆë§ˆë‹¤ ê°ì²´ ìƒì„±
 
 
 		auto tempObject = new MeshObject();
+		auto tempObject2 = new MeshObject();
 		BasicObjectDesc objDesc;
 		objDesc.primitiveType = GL_TRIANGLES;
-		string meshName;
-		if (rand() % 10 > 4)
-			meshName = "Triangle";
-		else
-			meshName = "Rectangle";
+		string meshName = "Rectangle";
 
-		//·£´ıÇÏ°Ô °´Ã¼»ı¼º
+
+		//ëœë¤í•˜ê²Œ ê°ì²´ìƒì„±
 		if (rand()%10 > 4) {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -5,0,0 }, { 0,0,0 }, { 1.0+rand()%3,1.0 + rand() % 3,1.0 + rand() % 3 }, { speedX,speedY,0 });
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -1,0,0 }, { 0,0,0 }, { 0.3, 0.3 , 1 }, { speedX,speedY,0 });
 		}
 		else {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 5,0,0 }, { 0,0,0 }, { 1.0 + rand() % 3,1.0 + rand() % 3,1.0 + rand() % 3 }, { -speedX,speedY,0 });
-
+			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 1,0,0 }, { 0,0,0 }, { 0.3 ,0.3 , 1}, { -speedX,speedY,0 });
 		}
+
+
+		tempObject2->Initialize(objDesc, renderer, meshMap[meshName], { 0,0,0 }, { 0,0,0 }, { 0.5 ,0.5 , 1 });
 		objectList.push_back(tempObject);
+		objectList.push_back(tempObject2);
 		shapeSpawnTime = 0.0f;
 	}
 
@@ -305,7 +427,7 @@ GLvoid drawScene() // Äİ¹é ÇÔ¼ö: Ãâ·Â
 	glutPostRedisplay();
 }
 
-GLvoid Reshape(int w, int h) // Äİ¹é ÇÔ¼ö: ´Ù½Ã ±×¸®±â 
+GLvoid Reshape(int w, int h) // ì½œë°± í•¨ìˆ˜: ë‹¤ì‹œ ê·¸ë¦¬ê¸° 
 {
 	glViewport(0, 0, w, h);
 }
