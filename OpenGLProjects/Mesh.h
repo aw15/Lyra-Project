@@ -8,6 +8,13 @@ enum class MeshType
 	Obj
 };
 
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 uv;
+};
+
 class Mesh
 {
 public:
@@ -20,6 +27,9 @@ public:
 	void CreateTriangle();
 	void CreateRectangle();
 	void CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<glm::vec3>& colors);
+	void CreateMeshByObjAsync(const string& path);
+
+
 
 	GLuint GetVAO() const { return vao; };
 

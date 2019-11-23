@@ -71,13 +71,14 @@ void Initialize()
 	meshMap["Triangle"] = new Mesh();
 	meshMap["Rectangle"] = new Mesh();
 	meshMap["Line"] = new Mesh();
+	meshMap["Box"] = new Mesh();
 
 	meshMap["Cube"]->CreateCube();
 	meshMap["Pyramid"]->CreatePyramid();
 	meshMap["Triangle"]->CreateTriangle();
 	meshMap["Rectangle"]->CreateRectangle();
 	meshMap["Line"]->CreateMeshByVertices({ {0,0,0},{1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
-
+	meshMap["Box"]->CreateMeshByObjAsync("Mesh/box.obj");
 
 
 	//auto tempObject = new MeshObject();
@@ -162,6 +163,8 @@ void GameThread(float timeDiff, std::promise<bool>* p)
 		}
 
 		objectList.push_back(tempObject);
+
+
 		shapeSpawnTime = 0.0f;
 	}
 

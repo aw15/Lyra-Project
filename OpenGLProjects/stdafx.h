@@ -7,6 +7,13 @@
 #include<chrono>
 #include<cstdio>
 #include<unordered_map>
+#include<set>
+#include<thread>
+#include<mutex>
+#include<future>
+#include<fstream>
+#include<sstream>
+
 //OpenGL
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -14,9 +21,7 @@
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include<thread>
-#include<mutex>
-#include<future>
+
 
 
 using namespace std;
@@ -59,3 +64,6 @@ void convertDeviceXYOpneglXY(int x, int y, float* ox, float* oy) { // À©µµ¿ìÁÂÇ¥
 char* filetobuf(const char *file);
 
 
+void Print(glm::vec3 param, const char* name = "point = ");
+
+vector<string> stringTokenize(const string& data, const char delimiter = ' ');

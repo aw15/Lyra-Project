@@ -338,6 +338,113 @@ void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<
 	glEnableVertexAttribArray(1);
 }
 
+void Mesh::CreateMeshByObjAsync(const string & path)
+{
+	ifstream in(path);
+
+	//vector<glm::vec3> positions;
+	vector<glm::vec3> normals;
+	vector<glm::vec2> uvs;
+	vector<GLuint> indices;
+
+	vector<Vertex> vertices;
+	Vertex tempVertex;
+
+	string ignore;
+	while (ignore != "v")
+	{
+		in >> ignore;
+	}
+
+	glm::vec3 tempVec3;
+	glm::vec2 tempVec2;
+
+	in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+	tempVertex.position = tempVec3;
+	vertices.push_back(tempVertex);
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "v")
+			break;
+		in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+		tempVertex.position = tempVec3;
+
+		vertices.push_back(tempVertex);
+	}
+
+
+	in >> tempVec2.x >> tempVec2.y;
+	uvs.push_back(tempVec2);
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "vt")
+			break;
+		in >>  tempVec2.x >> tempVec2.y;
+		uvs.push_back(tempVec2);
+	}
+
+	in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+	normals.push_back(tempVec3);
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "vn")
+			break;
+		in>> tempVec3.x >> tempVec3.y >> tempVec3.z;
+		normals.push_back(tempVec3);
+	}
+	in >> ignore;
+
+
+	//for (int i = 0; i < vertices.size(); i++)
+	//{
+	//	Print(vertices[i].position, "position =");
+	//}
+	//for (int i = 0; i < normals.size(); i++)
+	//{
+	//	Print(normals[i], "normal =");
+	//}
+
+	int positionIndex;
+	int uvIndex;
+	int normalIndex;
+
+	string s;
+	while (true)
+	{
+		in >> ignore;
+		if (in.eof())
+			break;
+
+		in >> s;
+
+		auto tokens = stringTokenize(s);
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+	
+		in >> s;
+
+		tokens = stringTokenize(s);
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+		in >> s;
+
+		tokens = stringTokenize(s);
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+	}
+
+
+}
+
 void Mesh::Delete()
 {
 	glDeleteVertexArrays(1, &vao);

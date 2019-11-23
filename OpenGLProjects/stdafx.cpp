@@ -14,3 +14,20 @@ char * filetobuf(const char * file)
 	buf[length] = 0; // Null terminator 
 	return buf; // Return the buffer 
 }
+
+void Print(glm::vec3 param, const char * name)
+{
+	cout << name << " " << param.x << " " << param.y << " " << param.z << endl;
+}
+
+vector<string> stringTokenize(const string & data, const char delimiter)
+{
+	vector<string> result;
+	string token;
+	stringstream ss(data);
+
+	while (getline(ss, token, delimiter)) {
+		result.push_back(token);
+	}
+	return result;
+}
