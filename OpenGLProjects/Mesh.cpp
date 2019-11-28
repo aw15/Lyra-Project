@@ -382,54 +382,56 @@ void Mesh::CreateMeshByObj(const char * path)
 	in >> ignore;
 
 
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		Print(vertices[i].position, "position =");
-	}
-	for (int i = 0; i < normal.size(); i++)
-	{
-		Print(normal[i], "normal =");
-	}
+	//for (auto data : uv)
+	//{
+	//	Print(data);
+	//}
+
 
 	int positionIndex;
 	int uvIndex;
 	int normalIndex;
 
-	string s;
+
+
 	while (true)
 	{
 		in >> ignore;
-		if (in.eof())
+		if (ignore == "f")
+			break;
+	}
+
+
+
+	string s;
+	vector<string> tokens;
+
+	in >> s;
+	ObjReadFace(tokens, s, position, normal, uv);
+	in >> s;
+	ObjReadFace(tokens, s, position, normal, uv);
+	in >> s;
+	ObjReadFace(tokens, s, position, normal, uv);
+
+	while (true)
+	{
+
+
+		in >> ignore;
+
+		if (in.fail())
 			break;
 
 		in >> s;
+		ObjReadFace(tokens, s, position, normal, uv);
 
-		vector<string> tokens;
-		stringTokenize(tokens, s, '/');
-		positionIndex = stoi(tokens[0]);
-		uvIndex = stoi(tokens[1]);
-		normalIndex = stoi(tokens[2]);
-
-		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
-
-
+	//	in >> ignore;
 		in >> s;
+		ObjReadFace(tokens, s, position, normal, uv);
 
-		stringTokenize(tokens, s,'/');
-		positionIndex = stoi(tokens[0]);
-		uvIndex = stoi(tokens[1]);
-		normalIndex = stoi(tokens[2]);
-
-		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
-
+	//	in >> ignore;
 		in >> s;
-
-		stringTokenize(tokens, s, '/');
-		positionIndex = stoi(tokens[0]);
-		uvIndex = stoi(tokens[1]);
-		normalIndex = stoi(tokens[2]);
-
-		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
+		ObjReadFace(tokens, s, position, normal, uv);
 	}
 
 	size = vertices.size();
@@ -444,20 +446,6 @@ void Mesh::CreateMeshByObj(const char * path)
 	//--- 1번째 VBO를활성화하여바인드하고, 버텍스속성 (좌표값)을저장 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
-
-
-	//int positionAttribID glGetAttribLocation(gShaderProgram, "Position");
-	//int colorAttribID glGetAttribLocation(gShaderProgram, “Color");
-
-	//	glEnableVertexAttribArray(positionAttribID);
-	//glEnableVertexAttribArray(colorAttribID);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	//glVertexAttribPointer(positionAttribID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
-	//glVertexAttribPointer(colorAttribID, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
-
-
-
 	// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * (size), &vertices[0], GL_STATIC_DRAW);
 	// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
@@ -466,6 +454,10 @@ void Mesh::CreateMeshByObj(const char * path)
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (GLvoid*)(5 * sizeof(float)));
 	// attribute 인덱스 0번을사용가능하게함 
 	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	colors.resize(vertices.size(), { 1,0,0 });
 
 	//---2번째 VBO를활성화하여바인드하고, 버텍스속성 (색상)을저장 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
@@ -474,9 +466,14 @@ void Mesh::CreateMeshByObj(const char * path)
 	// 색상값을 attribute 인덱스 1번에명시한다: 버텍스당3*float 
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 1번을사용가능하게함. 
-	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(3);
 
-
+	//for(auto& data : vertices)
+	//{
+	//	Print(data.position, "position = ");
+	//	Print(data.uv, "uv = ");
+	//	Print(data.normal, "normal = ");
+	//}
 
 }
 
@@ -484,4 +481,13 @@ void Mesh::Delete()
 {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(2, vbo);
+}
+
+void Mesh::ObjReadFace(vector<string>& tokens, string& s, vector<glm::vec3>& position, vector<glm::vec3>& normal,vector<glm::vec2>& uv)
+{
+	tokens.clear();
+	stringTokenize(tokens, s, '/');
+	int positionIndex = stoi(tokens[0]);
+	int uvIndex = stoi(tokens[1]);
+	int normalIndex = stoi(tokens[2]);	vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex-1] });
 }

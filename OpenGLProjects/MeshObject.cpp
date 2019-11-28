@@ -52,13 +52,13 @@ void MeshObject::Render(const GLuint shaderID)
 
 void MeshObject::Update( const float elapsedTime)
 {
-	//finalMatrix = renderer->projMatrix * renderer->viewMatrix *  GetFinalMatrix();
+
 	Translate(movementSpeed * (float)elapsedTime);
 	Roll(rotationSpeed.x* elapsedTime);
 	Pitch(rotationSpeed.y * elapsedTime);
 	Yaw(rotationSpeed.z * elapsedTime);
 
-	finalMatrix =   GetFinalMatrix();
+	finalMatrix = renderer->projMatrix * renderer->viewMatrix *  GetFinalMatrix();
 
 }
 

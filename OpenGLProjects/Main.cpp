@@ -1,6 +1,5 @@
 ﻿#include"stdafx.h"
 #include"Renderer.h"
-#include "BasicObject.h"
 #include"MeshObject.h"
 #include"Mesh.h"
 #include"Physics.h"
@@ -84,40 +83,17 @@ void Initialize()
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
 
 	meshMap["Cube"] = new Mesh();
-	meshMap["Pyramid"] = new Mesh();
-	meshMap["Triangle"] = new Mesh();
-	meshMap["Rectangle"] = new Mesh();
-	meshMap["Line"] = new Mesh();
-
-	meshMap["Cube"]->CreateCube();
-	meshMap["Pyramid"]->CreatePyramid();
-	meshMap["Triangle"]->CreateTriangle();
-	meshMap["Rectangle"]->CreateRectangle();
-	meshMap["Line"]->CreateMeshByVertices({ {0,0,0}, {1,1,1} }, { { 0,1,1 }, { 0,1,1 } });
+	meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
 
 
 	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_TRIANGLES;
-	string meshName;
-	meshName = "Rectangle";
 
-	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 0,0,0 }, { 0,0,0 }, { 0.5,0.5,0});
-	
+	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0.5 }, { 0,0,0 }, { 1,1,1});
+	//tempObject->SetRotationSpeed({ 3,0,0 });
 	objectList.push_back(tempObject);
 
-	tempObject = new MeshObject();
-	objDesc.primitiveType = GL_TRIANGLES;
-	meshName = "Rectangle";
-
-	tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -100,0,0 }, { 0,0,0 }, { 0.5,0.5,0 });
-
-	objectList.push_back(tempObject);
-	
-
-	objDesc.primitiveType = GL_LINES;
-
-	lineObject.Initialize(objDesc, renderer, meshMap["Line"]);
 }
 
 
@@ -190,7 +166,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	glDisable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
@@ -209,15 +185,19 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 GLvoid drawScene() // 콜백 함수: 출력 
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
-	glClear(GL_COLOR_BUFFER_BIT||GL_DEPTH_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
-	glUseProgram(renderer->shaderProgramMap["basic"]);
+	glUseProgram(renderer->shaderProgramMap["obj"]);
 
 
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
-	
+	for(auto& data:objectList)
+	{
+		data->Update(diff.count());
+		data->Render(renderer->shaderProgramMap["obj"]);
+	}
 
 	
 	glutSwapBuffers();

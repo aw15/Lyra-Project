@@ -31,6 +31,11 @@ void Print(const glm::vec4 & param, string tag)
 	std::cout << tag << param.x << " " << param.y << " " << param.z << endl;
 }
 
+void Print(const glm::vec3 & param, string tag)
+{
+	std::cout << tag << param.x << " " << param.y <<" "<<param.z << endl;
+}
+
 void Print(const glm::vec2 & param, string tag)
 {
 	std::cout << tag << param.x << " " << param.y << endl;

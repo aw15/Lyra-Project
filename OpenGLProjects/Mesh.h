@@ -26,6 +26,9 @@ public:
 	GLuint GetVAO() const { return vao; };
 
 	void Delete();
+
+private:
+	void ObjReadFace(vector<string>& tokens, string& s, vector<glm::vec3>& position, vector<glm::vec3>& normal, vector<glm::vec2>& uv);
 public:
 	int size = 0;
 	vector<VertexData> vertices;

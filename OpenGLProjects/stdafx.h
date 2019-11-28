@@ -57,6 +57,7 @@ char* filetobuf(const char *file);
 
 
 void Print(const glm::vec4& param, string tag = "temp : ");
+void Print(const glm::vec3& param, string tag = "temp : ");
 void Print(const glm::vec2& param, string tag = "temp : ");
 
 
