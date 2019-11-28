@@ -29,7 +29,7 @@ void Renderer::SetProjMatrix(float fov,float nearZ,float farZ)
 	);
 }
 
-bool Renderer::AddShader(const string& vertexShaderPath, const string & pixelShaderPath, const string& shaderName)
+bool Renderer::AddShaderWithTwoParam(const string& vertexShaderPath, const string & pixelShaderPath, const string& shaderName)
 {
 	GLuint ShaderProgramID;
 
@@ -65,6 +65,61 @@ bool Renderer::AddShader(const string& vertexShaderPath, const string & pixelSha
 
 	glBindAttribLocation(ShaderProgramID, 0, "in_Position");
 	glBindAttribLocation(ShaderProgramID, 1, "in_Color");
+
+
+	glLinkProgram(ShaderProgramID); // 세이더프로그램링크하기
+	glDeleteShader(vertexShader); // 세이더프로그램에링크하여세이더객체자체는삭제가능 
+	glDeleteShader(fragmentShader);
+	glGetProgramiv(ShaderProgramID, GL_LINK_STATUS, &result); // 세이더가잘연결되었는지체크하기 
+	if (!result) {
+		glGetProgramInfoLog(ShaderProgramID, 512, NULL, errorLog);
+		cerr << "ERROR: shader program 연결실패\n" << errorLog << endl;
+		return false;
+	}
+
+	shaderProgramMap[shaderName] = ShaderProgramID;
+
+	return true;
+}
+
+bool Renderer::AddShaderWithFourParam(const string & vertexShaderPath, const string & pixelShaderPath, const string & shaderName)
+{
+	GLuint ShaderProgramID;
+
+	auto vertexsource = filetobuf(vertexShaderPath.c_str());
+	auto fragmentsource = filetobuf(pixelShaderPath.c_str());
+
+	//---버텍스세이더읽어저장하고컴파일하기 
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexsource, NULL);
+	glCompileShader(vertexShader);
+	GLint result;
+	GLchar errorLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
+	if (!result) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
+		cerr << "ERROR: vertex shader 컴파일실패\n" << errorLog << endl;
+		return false;
+	}
+
+	//---프래그먼트세이더읽어저장하고컴파일하기
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentsource, NULL);
+	glCompileShader(fragmentShader);
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
+	if (!result) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
+		cerr << "ERROR: fragment shader 컴파일실패\n" << errorLog << endl;
+		return false;
+	}
+	ShaderProgramID = glCreateProgram(); //---세이더프로그램만들기
+	glAttachShader(ShaderProgramID, vertexShader); // 세이더프로그램에버텍스세이더붙이기 
+	glAttachShader(ShaderProgramID, fragmentShader); // 세이더프로그램에프래그먼트세이더붙이기
+
+	glBindAttribLocation(ShaderProgramID, 0, "in_Position");
+	glBindAttribLocation(ShaderProgramID, 1, "in_TexCoord");
+	glBindAttribLocation(ShaderProgramID, 2, "in_Normal");
+	glBindAttribLocation(ShaderProgramID, 3, "in_Color");
 
 
 	glLinkProgram(ShaderProgramID); // 세이더프로그램링크하기

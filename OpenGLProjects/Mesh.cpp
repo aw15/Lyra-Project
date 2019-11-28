@@ -4,47 +4,6 @@
 
 
 
-void Mesh::Render(Renderer* const renderer)
-{
-	if (type == MeshType::Obj)
-	{
-		renderer->DrawMeshObject(GL_TRIANGLES, vao, vertices.size());
-	}
-}
-
-void Mesh::CreateBasicObject(MeshType type)
-{
-	if (type == MeshType::Obj)
-	{
-		//// VAO 를지정하고할당하기 
-		//glGenVertexArrays(1, &vao);
-		//// VAO를바인드하기 
-		//glBindVertexArray(vao);
-
-
-		//// 2개의 VBO를지정하고할당하기 
-		//glGenBuffers(2, vbo);
-		////--- 1번째 VBO를활성화하여바인드하고, 버텍스속성 (좌표값)을저장 
-		//glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-
-		//// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(objectInfo.mesh.vertex[0]) * objectInfo.mesh.vertex.size(), &objectInfo.mesh.vertex[0], GL_STATIC_DRAW);
-		//// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
-		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		//// attribute 인덱스 0번을사용가능하게함 
-		//glEnableVertexAttribArray(0);
-
-		////---2번째 VBO를활성화하여바인드하고, 버텍스속성 (색상)을저장 
-		//glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		//// 변수 colors에서버텍스색상을복사한다. 
-		//// colors 배열의사이즈: 9 *float 
-		//glBufferData(GL_ARRAY_BUFFER, sizeof(objectInfo.mesh.color[0]) *objectInfo.mesh.color.size(), &objectInfo.mesh.color[0], GL_STATIC_DRAW);
-		//// 색상값을 attribute 인덱스 1번에명시한다: 버텍스당3*float 
-		//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		//// attribute 인덱스 1번을사용가능하게함. 
-		//glEnableVertexAttribArray(1);
-	}
-}
 
 void Mesh::CreateCube()
 {
@@ -216,13 +175,14 @@ void Mesh::CreatePyramid()
 
 void Mesh::CreateTriangle()
 {
+	vector<glm::vec3> position;
 
-	vertices.push_back({ 0,0.5,0 });
-	vertices.push_back({ -0.5,0,0 });
-	vertices.push_back({ 0.5,0,0 });
+	position.push_back({ 0,0.5,0 });
+	position.push_back({ -0.5,0,0 });
+	position.push_back({ 0.5,0,0 });
 	
 
-	size = vertices.size();
+	size = position.size();
 
 	for (int i = 0; i < size; i += 3)
 	{
@@ -240,7 +200,7 @@ void Mesh::CreateTriangle()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
 	// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * (size), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * (size), &position[0], GL_STATIC_DRAW);
 	// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 0번을사용가능하게함 
@@ -255,22 +215,31 @@ void Mesh::CreateTriangle()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 1번을사용가능하게함. 
 	glEnableVertexAttribArray(1);
+
+	VertexData temp;
+
+	for (auto& data : position)
+	{
+		temp.position = data;
+		vertices.push_back(temp);
+	}
 }
 
 void Mesh::CreateRectangle()
 {
+	vector<glm::vec3> position;
 
-	vertices.push_back({ -0.5,0.5,0 });
-	vertices.push_back({ -0.5,-0.5,0 });
-	vertices.push_back({ 0.5,0.5,0 });
-	vertices.push_back({ 0.5,0.5,0 });
-	vertices.push_back({ -0.5,-0.5,0 });
-	vertices.push_back({ 0.5,-0.5,0 });
+	position.push_back({ -0.5,0.5,0 });
+	position.push_back({ -0.5,-0.5,0 });
+	position.push_back({ 0.5,0.5,0 });
+	position.push_back({ 0.5,0.5,0 });
+	position.push_back({ -0.5,-0.5,0 });
+	position.push_back({ 0.5,-0.5,0 });
 	
 	
 	
 
-	size = vertices.size();
+	size = position.size();
 
 	for (int i = 0; i < size; i += 1)
 	{
@@ -288,7 +257,7 @@ void Mesh::CreateRectangle()
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
 	// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * (size), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * (size), &position[0], GL_STATIC_DRAW);
 	// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 0번을사용가능하게함 
@@ -303,13 +272,20 @@ void Mesh::CreateRectangle()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 1번을사용가능하게함. 
 	glEnableVertexAttribArray(1);
+
+	VertexData temp;
+
+	for (auto& data : position)
+	{
+		temp.position = data;
+		vertices.push_back(temp);
+	}
+
+	
 }
 
-void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<glm::vec3>& colors)
+void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertex, const vector<glm::vec3>& colors)
 {
-
-	size = vertices.size();
-
 
 	// VAO 를지정하고할당하기 
 	glGenVertexArrays(1, &vao);
@@ -322,7 +298,7 @@ void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 
 	// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * (size), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex[0]) * (size), &vertex[0], GL_STATIC_DRAW);
 	// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 0번을사용가능하게함 
@@ -337,6 +313,171 @@ void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 1번을사용가능하게함. 
 	glEnableVertexAttribArray(1);
+
+	
+	VertexData temp;
+
+	for (auto& data : vertex)
+	{
+		temp.position = data;
+		vertices.push_back(temp);
+	}
+}
+
+void Mesh::CreateMeshByObj(const char * path)
+{
+	ifstream in(path);
+	vector<glm::vec3> position;
+	vector<glm::vec3> normal;
+	vector<glm::vec2> uv;
+
+	vector<GLuint> indices;
+
+
+	string ignore;
+
+	while (ignore != "v")
+	{
+		in >> ignore;
+	}
+
+	glm::vec3 tempVec3;
+	glm::vec2 tempVec2;
+
+	in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+	position.push_back(tempVec3);
+
+
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "v")
+			break;
+		in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+		position.push_back(tempVec3);
+	}
+
+
+	in >> tempVec2.x >> tempVec2.y;
+	uv.push_back(tempVec2);
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "vt")
+			break;
+		in >> tempVec2.x >> tempVec2.y;
+		uv.push_back(tempVec2);
+	}
+
+	in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+	normal.push_back(tempVec3);
+	while (true)
+	{
+		in >> ignore;
+		if (ignore != "vn")
+			break;
+		in >> tempVec3.x >> tempVec3.y >> tempVec3.z;
+		normal.push_back(tempVec3);
+	}
+	in >> ignore;
+
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		Print(vertices[i].position, "position =");
+	}
+	for (int i = 0; i < normal.size(); i++)
+	{
+		Print(normal[i], "normal =");
+	}
+
+	int positionIndex;
+	int uvIndex;
+	int normalIndex;
+
+	string s;
+	while (true)
+	{
+		in >> ignore;
+		if (in.eof())
+			break;
+
+		in >> s;
+
+		vector<string> tokens;
+		stringTokenize(tokens, s, '/');
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
+
+
+		in >> s;
+
+		stringTokenize(tokens, s,'/');
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
+
+		in >> s;
+
+		stringTokenize(tokens, s, '/');
+		positionIndex = stoi(tokens[0]);
+		uvIndex = stoi(tokens[1]);
+		normalIndex = stoi(tokens[2]);
+
+		vertices.push_back({ position[positionIndex - 1],uv[uvIndex - 1],normal[normalIndex] });
+	}
+
+	size = vertices.size();
+
+	// VAO 를지정하고할당하기 
+	glGenVertexArrays(1, &vao);
+	// VAO를바인드하기 
+	glBindVertexArray(vao);
+
+	// 2개의 VBO를지정하고할당하기 
+	glGenBuffers(2, vbo);
+	//--- 1번째 VBO를활성화하여바인드하고, 버텍스속성 (좌표값)을저장 
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+
+
+	//int positionAttribID glGetAttribLocation(gShaderProgram, "Position");
+	//int colorAttribID glGetAttribLocation(gShaderProgram, “Color");
+
+	//	glEnableVertexAttribArray(positionAttribID);
+	//glEnableVertexAttribArray(colorAttribID);
+
+	//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	//glVertexAttribPointer(positionAttribID, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+	//glVertexAttribPointer(colorAttribID, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (GLvoid*)(3 * sizeof(float)));
+
+
+
+	// 변수 diamond 에서버텍스데이터값을버퍼에복사한다.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * (size), &vertices[0], GL_STATIC_DRAW);
+	// 좌표값을 attribute 인덱스 0번에명시한다: 버텍스당 3* float 
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), 0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (GLvoid*)(3 * sizeof(float)));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]), (GLvoid*)(5 * sizeof(float)));
+	// attribute 인덱스 0번을사용가능하게함 
+	glEnableVertexAttribArray(0);
+
+	//---2번째 VBO를활성화하여바인드하고, 버텍스속성 (색상)을저장 
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	// 변수 colors에서버텍스색상을복사한다.  
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors[0]) * colors.size(), &colors[0], GL_STATIC_DRAW);
+	// 색상값을 attribute 인덱스 1번에명시한다: 버텍스당3*float 
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	// attribute 인덱스 1번을사용가능하게함. 
+	glEnableVertexAttribArray(1);
+
+
+
 }
 
 void Mesh::Delete()

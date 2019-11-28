@@ -43,32 +43,6 @@ bool isLineComplete = false;
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-
-	case 'f': //도형그리기모드변경
-		if (isPolygonMode == false) {
-			glPolygonMode(GL_FRONT, GL_LINE);
-			isPolygonMode = true;
-		}
-		else {
-			glPolygonMode(GL_FRONT, GL_FILL);
-			isPolygonMode = false;
-		}
-		break;
-		//날라오는 경로 출력	
-
-
-	case '+'://날라오는속도 증가.
-		speedX = speedX + 0.5;
-		speedY = speedY + 0.5;
-		break;
-
-	case '-': // 속도 감소
-		speedX = speedX - 0.5;
-		speedY = speedY - 0.5;
-		break;
-
-	case 'q': // 종료
-		glutDestroyWindow(window);
 		break;
 	}
 }
@@ -96,48 +70,15 @@ void SpecialInput(int key, int x, int y)
 
 void Initialize()
 {
-	//서더랜드 알고리즘 테스트////////////////////////////////////////////////////////////////////////////
-	//float poly_size = 3;
-	//vector<glm::vec3> poly_points = { {0,50,0}, {-50,0,0},
-	//						  {50,0,0} };
-
-	//// Defining clipper polygon vertices in clockwise order 
-	//// 1st Example with square clipper 
-	//float clipper_size = 4;
-	//vector<glm::vec2> clipper_points= { {0,100}, {0,-100},
-	//						  {1200,-100}, {1200,100} };
-
-	//suthHodgClip(poly_points, poly_size, clipper_points,
-	//	clipper_size);
-
-	//physics.SetCohenSutherlandTarget({ -0.5,-0.5,0 }, { 0.5,0.5,0 });
-	//physics.CohenSutherlandClip(0, 100, 0, -100);
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	////CyrusBeck 알고리즘///////////////////////////////////////////////////////////////////////////////////
-	//vector<glm::vec3> vertices
-	//	= { {200, 50, 0},
-	//		{250, 100, 0},
-	//		{200, 150, 0},{100,150,0},{50,100,0},{100,50,0} };
-
-	//// Make sure that the vertices 
-	//// are put in a clockwise order 
-	//glm::vec2 line[] = { {150, 0} , {150,500} };
-
-	//vector<glm::vec2> result;
-	//auto r = CyrusBeck(vertices, line, vertices.size(), result);
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 	InitDesc desc;
 	desc.width = WIDTH;
 	desc.height = HEIGHT;
 
 
 	renderer = new Renderer{ desc };
-	renderer->AddShader("vertex.glsl", "pixel.glsl", "basic");
-	renderer->AddShader("lineVertex.glsl", "pixel.glsl", "line");
+	renderer->AddShaderWithTwoParam("vertex.glsl", "pixel.glsl", "basic");
+	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
+	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl","obj");
 
 	renderer->SetViewMatrix({ 0,0,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
@@ -212,108 +153,20 @@ void Mouse(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
 		//좌표계변환
-
 		float ox;
 		float oy;
 		convertDeviceXYOpneglXY(x, y, &ox, &oy);		
 		mouseStartX = ox;
 		mouseStartY = oy;
-
-		//cout << ox << " " << oy << endl;
 	}
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
-		isLineComplete = false;
-
-
-
-		for (auto iter = objectList.begin() ; iter != objectList.end();iter++)
-		{
-			vector<glm::vec3> result;
-			int clipDir = 0;
-
-			glm::vec4 min = objectList[0]->GetFinalMatrix() * glm::vec4{ objectList[0]->mesh->vertices[1],0 };
-			glm::vec4 max = objectList[0]->GetFinalMatrix() *glm::vec4{ objectList[0]->mesh->vertices[2],0 };
-			physics.SetCohenSutherlandTarget(min, max);
-			physics.CohenSutherlandClip(mouseStartX, mouseStartY, mouseEndX, mouseEndY, result, clipDir);
-
-			if (result.size() == 2)
-			{
-				auto mesh1 = new Mesh;
-				auto mesh2 = new Mesh;
-
-				auto object1 = new MeshObject();
-				auto object2 = new MeshObject();
-				BasicObjectDesc objDesc;
-				glm::vec3 color1{ 1,0,0 };
-				glm::vec3 color2{ 0,1,0 };
-
-				if (clipDir == TOP_DOWN)
-				{
-
-					
-					mesh1->CreateMeshByVertices(
-						{ glm::vec3{min.x,min.y,0}, glm::vec3{min.x,max.y,0}, result[0],result[0], result[1], min },
-						{ color1,color1,color1, color1, color1, color1 }
-					);
-
-					mesh2->CreateMeshByVertices(
-						{ result[0], max, result[1], result[1], {max.x,min.y,0}, max },
-						{color2,color2,color2,color2,color2, color2}
-
-					);
-
-
-
-					objDesc.primitiveType = GL_TRIANGLES;
-					object1->Initialize(objDesc, renderer, mesh1, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, {0,-0.1,0});
-
-					(*iter)->isActive = false;
-					meshes.push_back(mesh1);
-					meshes.push_back(mesh2);
-					objectList.push_back(object1);
-
-					object2->Initialize(objDesc, renderer, mesh2, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.05,0 });
-					objectList.push_back(object2);
-	
-				}
-				if (clipDir == LEFT_RIGHT)
-				{
-					mesh1->CreateMeshByVertices(
-						{ glm::vec3{min.x,min.y,0}, result[0],result[1], result[1],{max.x,min.y,0}, min },
-						{ color1,color1,color1, color1, color1, color1 }
-					);
-
-					mesh2->CreateMeshByVertices(
-						{ result[0], result[1], max , max, {min.x,max.y,0}, result[0] },
-						{ color2,color2,color2,color2,color2, color2 }
-
-					);
-
-
-
-					objDesc.primitiveType = GL_TRIANGLES;
-					object1->Initialize(objDesc, renderer, mesh1, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.1,0 });
-
-					(*iter)->isActive = false;
-					meshes.push_back(mesh1);
-					meshes.push_back(mesh2);
-					objectList.push_back(object1);
-
-					object2->Initialize(objDesc, renderer, mesh2, { 0,0,0 }, { 0,0,0 }, { 1,1,0 }, { 0,-0.05,0 });
-					objectList.push_back(object2);
-				}
-
-
-				break;
-			}
-		}
-
+		
 
 	}
-
-
-
 }
+
+
+
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
 { //--- 윈도우 생성하기
 	glutInit(&argc, argv); // glut 초기화
@@ -334,8 +187,8 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 
 	Initialize();
 
-	//glEnable(GL_DEPTH_TEST);
-	//glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
 	glDisable(GL_CULL_FACE);
 
@@ -356,7 +209,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 GLvoid drawScene() // 콜백 함수: 출력 
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
-	glClear(GL_COLOR_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
+	glClear(GL_COLOR_BUFFER_BIT||GL_DEPTH_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
 
 	glUseProgram(renderer->shaderProgramMap["basic"]);
 
@@ -364,63 +217,7 @@ GLvoid drawScene() // 콜백 함수: 출력
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
-
-	static float shapeSpawnTime = 2.0f;
-
-	shapeSpawnTime += diff.count();
-
-	for (auto& data : objectList)
-	{
-		if (data->isActive)
-		{
-			data->Update(diff.count());
-			data->Render(renderer->shaderProgramMap["basic"]);
-		}
-	}
-
 	
-
-
-	glUseProgram(renderer->shaderProgramMap["line"]);
-	if (isLineComplete == true) {
-		glm::vec3 start = { mouseStartX,mouseStartY,0 };
-		glm::vec3 end = { mouseEndX,mouseEndY,0 };
-
-		unsigned int location = glGetUniformLocation(renderer->shaderProgramMap["line"], "startPosition");
-		glUniform3fv(location, 1, glm::value_ptr(start));
-		location = glGetUniformLocation(renderer->shaderProgramMap["line"], "endPosition");
-		glUniform3fv(location, 1, glm::value_ptr(end));
-
-		lineObject.Update(diff.count());
-		lineObject.Render(renderer->shaderProgramMap["line"]);
-	}
-
-
-	if (shapeSpawnTime > 2.0) { //2초마다 객체 생성
-
-
-		auto tempObject = new MeshObject();
-		auto tempObject2 = new MeshObject();
-		BasicObjectDesc objDesc;
-		objDesc.primitiveType = GL_TRIANGLES;
-		string meshName = "Rectangle";
-
-
-		//랜덤하게 객체생성
-		if (rand()%10 > 4) {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { -1,0,0 }, { 0,0,0 }, { 0.3, 0.3 , 1 }, { speedX,speedY,0 });
-		}
-		else {
-			tempObject->Initialize(objDesc, renderer, meshMap[meshName], { 1,0,0 }, { 0,0,0 }, { 0.3 ,0.3 , 1}, { -speedX,speedY,0 });
-		}
-
-
-		tempObject2->Initialize(objDesc, renderer, meshMap[meshName], { 0,0,0 }, { 0,0,0 }, { 0.5 ,0.5 , 1 });
-		objectList.push_back(tempObject);
-		objectList.push_back(tempObject2);
-		shapeSpawnTime = 0.0f;
-	}
-
 
 	
 	glutSwapBuffers();

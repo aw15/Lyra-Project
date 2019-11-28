@@ -7,6 +7,8 @@
 #include<chrono>
 #include<cstdio>
 #include<unordered_map>
+#include<fstream>
+#include <sstream>
 //OpenGL
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -51,15 +53,12 @@ void convertDeviceXYOpneglXY(int x, int y, float* ox, float* oy);
 
 char* filetobuf(const char *file);
 
-void suthHodgClip(vector<glm::vec3> poly_points, int poly_size,
-	vector<glm::vec2>& clipper_points, int clipper_size);
-
-
-bool CyrusBeck(vector<glm::vec3>& vertices,
-	glm::vec2 line[], int n, vector<glm::vec2>& result);
 
 
 
+void Print(const glm::vec4& param, string tag = "temp : ");
+void Print(const glm::vec2& param, string tag = "temp : ");
 
-void Print(const glm::vec4& param);
-void Print(const glm::vec2& param);
+
+
+void stringTokenize(vector<string>& result, string& s, char delim);

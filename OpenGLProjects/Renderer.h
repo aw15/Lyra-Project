@@ -19,7 +19,8 @@ public:
 	void SetViewMatrix(const glm::vec3& cameraPosition, const glm::vec3& lookDir, const glm::vec3& cameraUp);
 	void SetProjMatrix( float fov ,  float nearZ,  float farZ);
 
-	bool AddShader(const string& vertexShaderPath, const string& pixelShaderPath, const string& shaderName);
+	bool AddShaderWithTwoParam(const string& vertexShaderPath, const string& pixelShaderPath, const string& shaderName);
+	bool AddShaderWithFourParam(const string& vertexShaderPath, const string& pixelShaderPath, const string& shaderName);
 
 	~Renderer();
 

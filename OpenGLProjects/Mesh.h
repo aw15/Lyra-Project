@@ -1,11 +1,13 @@
 #pragma once
 class Renderer;
 
-enum class MeshType
+
+
+struct VertexData
 {
-	Cylinder,
-	Sphere,
-	Obj
+	glm::vec3 position;
+	glm::vec2 uv;
+	glm::vec3 normal;
 };
 
 class Mesh
@@ -13,27 +15,26 @@ class Mesh
 public:
 	Mesh() = default;
 	~Mesh() = default;
-	void Render(Renderer* const renderer);
-	void CreateBasicObject(MeshType type);
 	void CreateCube();
 	void CreatePyramid();
 	void CreateTriangle();
 	void CreateRectangle();
-	void CreateMeshByVertices(const vector<glm::vec3>& vertices, const vector<glm::vec3>& colors);
+	void CreateMeshByVertices(const vector<glm::vec3>& vertex, const vector<glm::vec3>& colors);
+	void CreateMeshByObj(const char* path);
+
 
 	GLuint GetVAO() const { return vao; };
 
 	void Delete();
 public:
 	int size = 0;
-	vector<glm::vec3> vertices;
+	vector<VertexData> vertices;
+	
 private:
-	vector<int> index;
 	vector<glm::vec3> colors;
 
 	GLuint  vao = UINT_MAX;
 	GLuint  vbo[2] = {0,0};
 
-	MeshType type;
 };
 
