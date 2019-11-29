@@ -12,12 +12,17 @@ Renderer::Renderer(InitDesc initDesc)
 
 void Renderer::SetViewMatrix(const glm::vec3& cameraPosition,const glm::vec3& lookDir,const glm::vec3& cameraUp)
 {
+	this->cameraPosition = cameraPosition;
+	this->lookDir = lookDir;
+	this->cameraUp = cameraUp;
+
 	viewMatrix = glm::lookAt(
 		cameraPosition, // 카메라는 (4,3,3) 에 있다. 월드 좌표에서
 		lookDir, // 그리고 카메라가 원점을 본다
 		cameraUp  // 머리가 위쪽이다 (0,-1,0 으로 해보면, 뒤집어 볼것이다)
 	);
 }
+
 
 void Renderer::SetProjMatrix(float fov,float nearZ,float farZ)
 {
@@ -141,11 +146,15 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::DrawMeshObject(const int primitiveType, GLuint vao, const int count)
+void Renderer::DrawMeshObject(const glm::mat4& worldMatrix,const int primitiveType,const GLuint vao, const int count)
 {
+	glm::mat4 finalMatrix =projMatrix * viewMatrix *  worldMatrix;
+
+	unsigned int modelLocation = glGetUniformLocation(currentShaderID, "u_transform");  //---버텍스세이더에서모델변환위치가져오기 
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
 	glBindVertexArray(vao);
 	glDrawArrays(primitiveType, 0, count);
-
 }
 
 

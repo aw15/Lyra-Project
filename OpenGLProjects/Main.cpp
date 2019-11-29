@@ -25,23 +25,24 @@ unordered_map<string,Mesh*> meshMap;
 
 auto prevTime = chrono::high_resolution_clock::now();
 
-int g_currentShape = LEFT_INDEX;
-
-int g_drawType = GLU_LINE;
-
-bool isRevoling = false;
 
 float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
 
-bool isPolygonMode = false;
-int window;
-float speedX = 1;
-float speedY = 1;
-bool isLineComplete = false;
 
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
+	case 'w':
+		objectList[0]->Translate({ 0,0,-0.1 });
+		break;
+	case 's':
+		objectList[0]->Translate({ 0,0,0.1 });
+		break;
+	case 'a':
+		objectList[0]->Translate({ -0.1,0,0 });
+		break;
+	case 'd':
+		objectList[0]->Translate({ 0.1,0,0 });
 		break;
 	}
 }
@@ -79,8 +80,8 @@ void Initialize()
 	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
 	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl","obj");
 
-	renderer->SetViewMatrix({ 0,0,5 }, { 0,0,0 }, { 0,1,0 });
-	renderer->SetProjMatrix(90.f, 0.0f, 1.0f);
+	renderer->SetViewMatrix({ 0,5,5 }, { 0,0,0 }, { 0,1,0 });
+	renderer->SetProjMatrix(90.f, 0.1f, 100.0f);
 
 	meshMap["Cube"] = new Mesh();
 	meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
@@ -90,8 +91,8 @@ void Initialize()
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_TRIANGLES;
 
-	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0.5 }, { 0,0,0 }, { 1,1,1});
-	//tempObject->SetRotationSpeed({ 3,0,0 });
+	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0 }, { 0,0,0 }, { 1,1,1});
+
 	objectList.push_back(tempObject);
 
 }
@@ -117,11 +118,7 @@ void CleanUp()
 void MousDrag(int x,int y) {
 	float ox;
 	float oy;
-	isLineComplete = true;
 	convertDeviceXYOpneglXY(x, y, &ox, &oy);
-
-	mouseEndX = ox;
-	mouseEndY = oy;
 }
 
 
@@ -149,7 +146,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // 디스플레이 모드 설정
 	glutInitWindowPosition(0, 0); // 윈도우의 위치 지정
 	glutInitWindowSize(WIDTH, HEIGHT); // 윈도우의 크기 지정
-	window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
+	int window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
 
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
@@ -163,10 +160,13 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 
 	Initialize();
 
+	//// Enable depth test
 	glEnable(GL_DEPTH_TEST);
+	//// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
-	glEnable(GL_CULL_FACE);
+
+	//glEnable(GL_CULL_FACE);
 
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
@@ -185,18 +185,22 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 GLvoid drawScene() // 콜백 함수: 출력 
 {
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 기본 흰색
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // 설정된 색으로 전체를 칠하기
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT);
 
-	glUseProgram(renderer->shaderProgramMap["obj"]);
+	
+
 
 
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
 	prevTime = chrono::high_resolution_clock::now();
 
+
+	renderer->SetCurrentShader("obj");//그리기 전에 어떤 쉐이더로 그릴지 꼭 지정해야뎌!
 	for(auto& data:objectList)
 	{
-		data->Update(diff.count());
-		data->Render(renderer->shaderProgramMap["obj"]);
+		data->Update(diff.count());//월드행렬 계산
+		data->Render();//쉐이더한테 값 넘겨주고
 	}
 
 	

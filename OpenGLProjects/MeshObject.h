@@ -10,7 +10,7 @@ public:
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh);
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale);
 	bool Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh, glm::vec3 position, glm::vec3 rotation, glm::vec3 scale, glm::vec3 movementSpeed);
-	void Render(const GLuint shaderID);
+	void Render();
 	void Update(const float elapsedTime);
 
 	glm::mat4 GetRevolveFinalMatrix() { return rotation * position * scale; };
@@ -33,7 +33,7 @@ public:
 
 public:
 	Mesh* mesh = nullptr;
-	glm::mat4 finalMatrix = glm::mat4(1.0f);
+	glm::mat4 worldMatrix = glm::mat4(1.0f);
 	bool isActive = true;
 private:
 	GLuint primitiveType = GLU_LINE;//어떤 프리미티브로 그릴건지
