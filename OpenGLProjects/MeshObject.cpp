@@ -55,6 +55,7 @@ void MeshObject::Update( const float elapsedTime)
 	Pitch(rotationSpeed.y * elapsedTime);
 	Yaw(rotationSpeed.z * elapsedTime);
 
+
 	worldMatrix = GetFinalMatrix();
 
 }

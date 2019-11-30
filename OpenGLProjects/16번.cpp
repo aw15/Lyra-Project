@@ -32,17 +32,25 @@ float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
-	case 'w':
-		objectList[0]->Translate({ 0,0,-0.1 });
+	case 'b': 
+		// 아래몸체가 y축에대하여양/음방향으로회전한다 
+		//아래몸체가회전하면중앙몸체와맨위의팔은같이회전한다
+
+		objectList[1]->SetRotationSpeed({0,10,0});
+		objectList[2]->SetRotationSpeed({ 0,10,0 });
+		objectList[3]->SetRotationSpeed({ 0,10,0 });
 		break;
-	case 's':
-		objectList[0]->Translate({ 0,0,0.1 });
+
+	case 'm':
+		//크레인의중앙몸체가 x축에대하여양/음방향으로회전한다. 
+		//회전각도는90 ~ 180도사이로정하고, 중앙몸체가회전하면맨위의팔도같이회전한다. 
+		
 		break;
-	case 'a':
-		objectList[0]->Translate({ -0.1,0,0 });
+
+	case 't':
+
 		break;
-	case 'd':
-		objectList[0]->Translate({ 0.1,0,0 });
+	case 'c':// 움직임 초기화
 		break;
 	}
 }
@@ -80,20 +88,40 @@ void Initialize()
 	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
 	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl","obj");
 
-	renderer->SetViewMatrix({ 0,5,5 }, { 0,0,0 }, { 0,1,0 });
+	renderer->SetViewMatrix({ 0,1,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.1f, 100.0f);
 
-	meshMap["Cube"] = new Mesh();
-	meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
+
+	BasicObjectDesc object;
+	object.primitiveType = GL_TRIANGLES;
+
+	//바닥 객체 만들기
+	Mesh* rectangle = new Mesh();
+	rectangle->CreateRectangle();
+
+	MeshObject* plane = new MeshObject();
+	plane->Initialize(object, renderer, rectangle, {0,-1,0}, { 30,0,0 }, { 10,7,1 });
+	objectList.push_back(plane);
 
 
-	auto tempObject = new MeshObject();
-	BasicObjectDesc objDesc;
-	objDesc.primitiveType = GL_TRIANGLES;
+	//크레인 객체 만들기
+	Mesh* cube = new Mesh();
+	cube->CreateCube();
 
-	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0 }, { 0,0,0 }, { 1,1,1});
+	MeshObject* crane1 = new MeshObject();
+	MeshObject* crane2 = new MeshObject();
+	MeshObject* crane3 = new MeshObject();
 
-	objectList.push_back(tempObject);
+	crane1->Initialize(object, renderer, cube, {}, {}, { 1,0.5,1 });
+	crane2->Initialize(object, renderer, cube, { 0,0.8,0 }, {}, { 0.5,0.3,1 });
+	crane3->Initialize(object, renderer, cube, { 0,1.9,0 }, {}, { 0.3,0.8,1 });
+
+	objectList.push_back(crane1);
+	objectList.push_back(crane2);
+	objectList.push_back(crane3);
+
+
+
 
 }
 
