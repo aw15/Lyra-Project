@@ -45,6 +45,9 @@
     <ClCompile Include="Physics.cpp">
       <Filter>Math</Filter>
     </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -62,6 +65,9 @@
     <ClInclude Include="Physics.h">
       <Filter>Math</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="pixel.glsl">
@@ -76,5 +82,10 @@
     <None Include="vertexBasic.glsl">
       <Filter>Shader</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="lightPixel.glsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

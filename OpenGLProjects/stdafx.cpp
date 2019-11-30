@@ -28,7 +28,7 @@ char * filetobuf(const char * file)
 
 void Print(const glm::vec4 & param, string tag)
 {
-	std::cout << tag << param.x << " " << param.y << " " << param.z << endl;
+	std::cout << tag << param.x << " " << param.y << " " << param.z<< " " << param.w  << endl;
 }
 
 void Print(const glm::vec3 & param, string tag)

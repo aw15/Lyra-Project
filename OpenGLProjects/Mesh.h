@@ -3,11 +3,10 @@ class Renderer;
 
 
 
-struct VertexData
+enum class MeshType
 {
-	glm::vec3 position;
-	glm::vec2 uv;
-	glm::vec3 normal;
+	BASIC_MESH,
+	OBJ_MESH
 };
 
 class Mesh
@@ -20,7 +19,7 @@ public:
 	void CreateTriangle();
 	void CreateRectangle();
 	void CreateMeshByVertices(const vector<glm::vec3>& vertex, const vector<glm::vec3>& colors);
-	void CreateMeshByObj(const char* path);
+	bool CreateMeshByObj(const char* path);
 
 
 	GLuint GetVAO() const { return vao; };
@@ -32,10 +31,10 @@ private:
 public:
 	int size = 0;
 	vector<VertexData> vertices;
+	MeshType meshType = MeshType::BASIC_MESH;
+
 	
 private:
-	vector<glm::vec3> colors;
-
 	GLuint  vao = UINT_MAX;
 	GLuint  vbo[2] = {0,0};
 

@@ -17,7 +17,7 @@ public:
 
 	void SetViewMatrix(const glm::vec3& cameraPosition, const glm::vec3& lookDir, const glm::vec3& cameraUp);
 	void SetProjMatrix( float fov ,  float nearZ,  float farZ);
-	void SetCurrentShader(const char* shaderName) inline {glUseProgram(shaderProgramMap[shaderName]); currentShaderID = shaderProgramMap[shaderName]; };
+	void SetCurrentShader(const char* shaderName) {glUseProgram(shaderProgramMap[shaderName]); currentShaderID = shaderProgramMap[shaderName]; };
 
 
 	bool AddShaderWithTwoParam(const string& vertexShaderPath, const string& pixelShaderPath, const string& shaderName);
@@ -26,8 +26,8 @@ public:
 
 
 
-	void DrawMeshObject(const glm::mat4& finalMatrix, const int primitiveType, const GLuint vao, const int count);
-
+	void Draw(const glm::mat4& worldMatrix, const int primitiveType, const GLuint vao, const int count);
+	void Draw(const glm::mat4& worldMatrix, const int primitiveType, const GLuint vao, const int count,const glm::vec4& color);
 
 public:
 	InitDesc initDesc;

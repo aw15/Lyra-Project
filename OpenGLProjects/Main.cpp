@@ -4,11 +4,6 @@
 #include"Mesh.h"
 #include"Physics.h"
 
-#define LEFT_INDEX 0
-#define RIGHT_INDEX 1
-
-#define TOP_DOWN 0b1100
-#define LEFT_RIGHT 0b0011
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -16,7 +11,6 @@ GLvoid Reshape(int w, int h);
 Renderer* renderer;
 Physics physics;
 vector<MeshObject*> objectList;
-vector<Mesh*> meshes;
 
 MeshObject lineObject;
 
@@ -68,8 +62,10 @@ void SpecialInput(int key, int x, int y)
 }
 
 
-void Initialize()
+bool Initialize()
 {
+	bool check = true;
+
 	InitDesc desc;
 	desc.width = WIDTH;
 	desc.height = HEIGHT;
@@ -78,23 +74,37 @@ void Initialize()
 	renderer = new Renderer{ desc };
 	renderer->AddShaderWithTwoParam("vertex.glsl", "pixel.glsl", "basic");
 	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
-	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl","obj");
+	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "lightPixel.glsl","obj");
 
 	renderer->SetViewMatrix({ 0,5,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.1f, 100.0f);
 
 	meshMap["Cube"] = new Mesh();
-	meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
+	check = meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
 
+	//meshMap["Wolf"] = new Mesh();
+	//check = meshMap["Wolf"]->CreateMeshByObj("Mesh/Wolf.obj");
+
+	/*meshMap["SpaceShip"] = new Mesh();
+	check = meshMap["SpaceShip"]->CreateMeshByObj("Mesh/SpaceShip.obj");
+*/
+
+
+	if (!check)
+	{
+		cout << "Mesh Load Failed" << endl;
+		return false;
+	}
 
 	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_TRIANGLES;
-
+	tempObject->color = { 1,0,0 ,1};
 	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0 }, { 0,0,0 }, { 1,1,1});
 
 	objectList.push_back(tempObject);
 
+	return true;
 }
 
 
@@ -158,7 +168,9 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	else
 		std::cout << "GLEW Initialized\n";
 
-	Initialize();
+	if (!Initialize())
+		return false;
+
 
 	//// Enable depth test
 	glEnable(GL_DEPTH_TEST);

@@ -7,6 +7,7 @@
 
 void Mesh::CreateCube()
 {
+	vector<glm::vec3> colors;
 	vector<float> g_vertex_buffer_data = {
 	-1.0f,-1.0f,-1.0f, // triangle 1 : begin
 	-1.0f,-1.0f, 1.0f,
@@ -118,10 +119,12 @@ void Mesh::CreateCube()
 	// attribute 인덱스 1번을사용가능하게함. 
 	glEnableVertexAttribArray(1);
 
+	meshType = MeshType::BASIC_MESH;
 }
 
 void Mesh::CreatePyramid()
 {
+	vector<glm::vec3> colors;
 	vector<float> g_vertex_buffer_data = {
 		0,1,0,
 		-1,-1,1,
@@ -171,11 +174,14 @@ void Mesh::CreatePyramid()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	// attribute 인덱스 1번을사용가능하게함. 
 	glEnableVertexAttribArray(1);
+
+	meshType = MeshType::BASIC_MESH;
 }
 
 void Mesh::CreateTriangle()
 {
 	vector<glm::vec3> position;
+	vector<glm::vec3> colors;
 
 	position.push_back({ 0,0.5,0 });
 	position.push_back({ -0.5,0,0 });
@@ -223,11 +229,14 @@ void Mesh::CreateTriangle()
 		temp.position = data;
 		vertices.push_back(temp);
 	}
+
+	meshType = MeshType::BASIC_MESH;
 }
 
 void Mesh::CreateRectangle()
 {
 	vector<glm::vec3> position;
+	vector<glm::vec3> colors;
 
 	position.push_back({ -0.5,0.5,0 });
 	position.push_back({ -0.5,-0.5,0 });
@@ -236,10 +245,9 @@ void Mesh::CreateRectangle()
 	position.push_back({ -0.5,-0.5,0 });
 	position.push_back({ 0.5,-0.5,0 });
 	
-	
-	
-
 	size = position.size();
+
+
 
 	for (int i = 0; i < size; i += 1)
 	{
@@ -281,7 +289,7 @@ void Mesh::CreateRectangle()
 		vertices.push_back(temp);
 	}
 
-	
+	meshType = MeshType::BASIC_MESH;
 }
 
 void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertex, const vector<glm::vec3>& colors)
@@ -322,11 +330,17 @@ void Mesh::CreateMeshByVertices(const vector<glm::vec3>& vertex, const vector<gl
 		temp.position = data;
 		vertices.push_back(temp);
 	}
+
+	meshType = MeshType::BASIC_MESH;
 }
 
-void Mesh::CreateMeshByObj(const char * path)
+bool Mesh::CreateMeshByObj(const char * path)
 {
 	ifstream in(path);
+
+	if (!in.is_open())
+		return false;
+
 	vector<glm::vec3> position;
 	vector<glm::vec3> normal;
 	vector<glm::vec2> uv;
@@ -382,10 +396,7 @@ void Mesh::CreateMeshByObj(const char * path)
 	in >> ignore;
 
 
-	//for (auto data : uv)
-	//{
-	//	Print(data);
-	//}
+
 
 
 	int positionIndex;
@@ -457,24 +468,9 @@ void Mesh::CreateMeshByObj(const char * path)
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
 
-	colors.resize(vertices.size(), { 1,0,0 });
+	meshType = MeshType::OBJ_MESH;
 
-	//---2번째 VBO를활성화하여바인드하고, 버텍스속성 (색상)을저장 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	// 변수 colors에서버텍스색상을복사한다.  
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colors[0]) * colors.size(), &colors[0], GL_STATIC_DRAW);
-	// 색상값을 attribute 인덱스 1번에명시한다: 버텍스당3*float 
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	// attribute 인덱스 1번을사용가능하게함. 
-	glEnableVertexAttribArray(3);
-
-	//for(auto& data : vertices)
-	//{
-	//	Print(data.position, "position = ");
-	//	Print(data.uv, "uv = ");
-	//	Print(data.normal, "normal = ");
-	//}
-
+	return true;
 }
 
 void Mesh::Delete()

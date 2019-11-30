@@ -25,29 +25,20 @@ using namespace std;
 #define HEIGHT 700
 
 
-enum class BasicShapeType
-{
-	SPHERE,
-	CONE,
-	CYLINDER,
-	DISK,
-	CUBE,
-	PYRAMID
-};
-
-
-enum class ObjectType
-{
-	BasicType,
-	MeshType
-};
-
-
 struct BasicObjectDesc
 {
 	GLuint primitiveType = GL_TRIANGLES;
-	BasicShapeType basicType = BasicShapeType::SPHERE;
 };
+
+
+
+struct VertexData
+{
+	glm::vec3 position;
+	glm::vec2 uv;
+	glm::vec3 normal;
+};
+
 
 void convertDeviceXYOpneglXY(int x, int y, float* ox, float* oy);
 

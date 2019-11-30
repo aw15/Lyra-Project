@@ -146,12 +146,37 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::DrawMeshObject(const glm::mat4& worldMatrix,const int primitiveType,const GLuint vao, const int count)
+void Renderer::Draw(const glm::mat4& worldMatrix,const int primitiveType,const GLuint vao, const int count)
 {
 	glm::mat4 finalMatrix =projMatrix * viewMatrix *  worldMatrix;
 
-	unsigned int modelLocation = glGetUniformLocation(currentShaderID, "u_transform");  //---버텍스세이더에서모델변환위치가져오기 
+	unsigned int modelLocation = glGetUniformLocation(currentShaderID, "u_finalMatrix");  //---버텍스세이더에서모델변환위치가져오기 
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
+	glBindVertexArray(vao);
+	glDrawArrays(primitiveType, 0, count);
+}
+
+void Renderer::Draw(const glm::mat4 & worldMatrix, const int primitiveType, const GLuint vao, const int count, const glm::vec4& color)
+{
+	glm::mat4 finalMatrix = projMatrix * viewMatrix *  worldMatrix;
+
+	unsigned int location = glGetUniformLocation(currentShaderID, "u_finalMatrix");  //---버텍스세이더에서모델변환위치가져오기 
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(finalMatrix));
+
+	 location = glGetUniformLocation(currentShaderID, "u_worldMatrix");  //---버텍스세이더에서모델변환위치가져오기 
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(worldMatrix));
+
+	location = glGetUniformLocation(currentShaderID, "u_color");
+	glUniform4f(location, color.r, color.g, color.b, color.a);
+
+	location = glGetUniformLocation(currentShaderID, "u_sunLight");
+	glUniform3f(location, 0,0,3);
+
+
+	location = glGetUniformLocation(currentShaderID, "u_ambientLight");
+	glUniform1f(location, 0.2f);
+
 
 	glBindVertexArray(vao);
 	glDrawArrays(primitiveType, 0, count);

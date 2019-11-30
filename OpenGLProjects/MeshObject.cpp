@@ -15,7 +15,7 @@ MeshObject::~MeshObject()
 bool MeshObject::Initialize(const BasicObjectDesc& desc, Renderer* renderer, Mesh* mesh)
 {
 	primitiveType = desc.primitiveType;
-	basicType = desc.basicType;
+
 	this->renderer = renderer;
 	this->mesh = mesh;
 	return true;
@@ -36,15 +36,19 @@ bool MeshObject::Initialize(const BasicObjectDesc & desc, Renderer * renderer, M
 {
 	Initialize(desc, renderer, mesh, position, rotation, scale);
 	this ->movementSpeed = glm::vec3(movementSpeed.x, movementSpeed.y, movementSpeed.z);
+
+	if (mesh)
+		return false;
+
 	return true;
 }
 
 void MeshObject::Render()
 {
-	if (mesh)
-	{
-		renderer->DrawMeshObject(worldMatrix, primitiveType, mesh->GetVAO(), mesh->size);
-	}
+	if(mesh->meshType == MeshType::BASIC_MESH)
+		renderer->Draw(worldMatrix, primitiveType, mesh->GetVAO(), mesh->size);
+	if (mesh->meshType == MeshType::OBJ_MESH)
+		renderer->Draw(worldMatrix, primitiveType, mesh->GetVAO(), mesh->size, color);
 }
 
 void MeshObject::Update( const float elapsedTime)
