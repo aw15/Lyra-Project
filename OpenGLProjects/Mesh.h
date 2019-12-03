@@ -16,6 +16,7 @@ public:
 	Mesh() = default;
 	~Mesh() = default;
 	void CreateCube();
+	void CreateCube(const glm::vec3 color);
 	void CreatePyramid();
 	void CreateTriangle();
 	void CreateRectangle();

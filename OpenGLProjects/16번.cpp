@@ -3,6 +3,7 @@
 #include"MeshObject.h"
 #include"Mesh.h"
 #include"Physics.h"
+#include "16번.h"
 
 #define LEFT_INDEX 0
 #define RIGHT_INDEX 1
@@ -12,7 +13,7 @@
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-
+int window;
 Renderer* renderer;
 Physics physics;
 vector<MeshObject*> objectList;
@@ -22,12 +23,11 @@ MeshObject lineObject;
 
 unordered_map<string,Mesh*> meshMap;
 
+bool isRotateX = false;
 
 auto prevTime = chrono::high_resolution_clock::now();
 
-
 float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
-
 
 void Keyboard(unsigned char key, int x, int y)
 {
@@ -36,21 +36,43 @@ void Keyboard(unsigned char key, int x, int y)
 		// 아래몸체가 y축에대하여양/음방향으로회전한다 
 		//아래몸체가회전하면중앙몸체와맨위의팔은같이회전한다
 
-		objectList[1]->SetRotationSpeed({0,10,0});
-		objectList[2]->SetRotationSpeed({ 0,10,0 });
-		objectList[3]->SetRotationSpeed({ 0,10,0 });
+		for (int i = 1; i < 4; ++i) {
+			objectList[i]->rotationSpeed.y = 10;
+		}
+
 		break;
 
 	case 'm':
 		//크레인의중앙몸체가 x축에대하여양/음방향으로회전한다. 
-		//회전각도는90 ~ 180도사이로정하고, 중앙몸체가회전하면맨위의팔도같이회전한다. 
-		
+		//회전각도는90 ~ 180도사이로정하고, 중앙몸체가 회전하면 맨위의 팔도같이회전한다. 
+		objectList[2]->rotationSpeed.x = 10;
+		objectList[3]->rotationSpeed.x = 10;
 		break;
 
 	case 't':
-
+		//크레인의맨위팔이 z축에대하여양 / 음방향으로회전한다. 회전각도는90~180도사이로정한다
+		objectList[3]->rotationSpeed.z = 10;
 		break;
+
+	case 's': //움직임 멈추기
+		for (int i = 1; i < 4; ++i) {
+			objectList[i]->SetRotationSpeed({ 0,0,0 });
+			isRotateX = false;
+		}
+		break;
+
 	case 'c':// 움직임 초기화
+		for (int i = 1; i < 4; ++i) {
+			objectList[i]->ResetRotation();
+			isRotateX = false;
+			objectList[i]->SetRotationSpeed({ 0,0,0 });
+			
+		}
+		
+		break;
+
+	case 'q':// 종료
+		glutDestroyWindow(window);
 		break;
 	}
 }
@@ -86,7 +108,7 @@ void Initialize()
 	renderer = new Renderer{ desc };
 	renderer->AddShaderWithTwoParam("vertex.glsl", "pixel.glsl", "basic");
 	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
-	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl","obj");
+	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "pixel.glsl", "obj");
 
 	renderer->SetViewMatrix({ 0,1,5 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.1f, 100.0f);
@@ -100,29 +122,31 @@ void Initialize()
 	rectangle->CreateRectangle();
 
 	MeshObject* plane = new MeshObject();
-	plane->Initialize(object, renderer, rectangle, {0,-1,0}, { 30,0,0 }, { 10,7,1 });
+	plane->Initialize(object, renderer, rectangle, { 0,-0.5,0 }, { 22.5,0,0 }, { 10,7,1 });
 	objectList.push_back(plane);
 
 
 	//크레인 객체 만들기
-	Mesh* cube = new Mesh();
-	cube->CreateCube();
+
+	meshMap["crane1"] = new Mesh();
+	meshMap["crane2"] = new Mesh();
+	meshMap["crane3"] = new Mesh();
+
+	meshMap["crane1"]->CreateCube({ 1,0,0 });
+	meshMap["crane2"]->CreateCube({ 1,1,0 });
+	meshMap["crane3"]->CreateCube({0, 1, 1});
 
 	MeshObject* crane1 = new MeshObject();
 	MeshObject* crane2 = new MeshObject();
 	MeshObject* crane3 = new MeshObject();
 
-	crane1->Initialize(object, renderer, cube, {}, {}, { 1,0.5,1 });
-	crane2->Initialize(object, renderer, cube, { 0,0.8,0 }, {}, { 0.5,0.3,1 });
-	crane3->Initialize(object, renderer, cube, { 0,1.9,0 }, {}, { 0.3,0.8,1 });
-
+	crane1->Initialize(object, renderer, meshMap["crane1"], {}, {}, { 1,0.5,1 });
+	crane2->Initialize(object, renderer, meshMap["crane2"], { 0,0.8,0 }, {}, { 0.5,0.3,1 });
+	crane3->Initialize(object, renderer, meshMap["crane3"], { 0,1.6,0 }, {}, { 0.3,0.5,0.5 });
+	
 	objectList.push_back(crane1);
 	objectList.push_back(crane2);
 	objectList.push_back(crane3);
-
-
-
-
 }
 
 
@@ -174,7 +198,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // 디스플레이 모드 설정
 	glutInitWindowPosition(0, 0); // 윈도우의 위치 지정
 	glutInitWindowSize(WIDTH, HEIGHT); // 윈도우의 크기 지정
-	int window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
+	window = glutCreateWindow("Example1"); // 윈도우 생성(윈도우 이름)
 
 	//--- GLEW 초기화하기
 	glewExperimental = GL_TRUE;
@@ -216,8 +240,6 @@ GLvoid drawScene() // 콜백 함수: 출력
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glClear(GL_COLOR_BUFFER_BIT);
 
-	
-
 
 
 	std::chrono::duration<double> diff = chrono::high_resolution_clock::now() - prevTime;
@@ -231,7 +253,31 @@ GLvoid drawScene() // 콜백 함수: 출력
 		data->Render();//쉐이더한테 값 넘겨주고
 	}
 
-	
+	if (objectList[2]->currentAngle.x > 90.f)
+	{
+		objectList[2]->rotationSpeed.x = -10;
+	}
+	else if (objectList[2]->currentAngle.x < -90.f)
+	{
+		objectList[2]->rotationSpeed.x = 10;
+	}
+
+	if (objectList[3]->currentAngle.x > 90.f)
+	{
+		objectList[3]->rotationSpeed.x = -10;
+	}
+	else if (objectList[3]->currentAngle.x < -90.f)
+	{
+		objectList[3]->rotationSpeed.x = 10;
+	}
+
+	if (objectList[3]->currentAngle.z > 90.f) {
+		objectList[3]->rotationSpeed.z = -10;
+	}
+	else if(objectList[3]->currentAngle.z < -90.f){
+		objectList[3]->rotationSpeed.z = 10;
+	}
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

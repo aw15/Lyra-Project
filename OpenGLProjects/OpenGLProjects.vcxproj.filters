@@ -45,6 +45,12 @@
     <ClCompile Include="16번.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="17번.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="18번.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
