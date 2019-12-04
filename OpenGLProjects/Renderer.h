@@ -1,4 +1,6 @@
 #pragma once
+#include"Light.h"
+
 
 struct InitDesc
 {
@@ -37,7 +39,7 @@ public:
 
 	unordered_map<string, GLuint> shaderProgramMap;
 
-
+	Light light; //빛 관련 변수들
 
 private:
 	GLuint currentShaderID;

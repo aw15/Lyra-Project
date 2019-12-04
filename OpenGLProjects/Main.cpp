@@ -53,10 +53,8 @@ void SpecialInput(int key, int x, int y)
 		//do something here
 		break;
 	case GLUT_KEY_LEFT:
-		//do something here
 		break;
 	case GLUT_KEY_RIGHT:
-		//do something here
 		break;
 	}
 }
@@ -85,9 +83,9 @@ bool Initialize()
 	//meshMap["Wolf"] = new Mesh();
 	//check = meshMap["Wolf"]->CreateMeshByObj("Mesh/Wolf.obj");
 
-	/*meshMap["SpaceShip"] = new Mesh();
-	check = meshMap["SpaceShip"]->CreateMeshByObj("Mesh/SpaceShip.obj");
-*/
+	//meshMap["SpaceShip"] = new Mesh();
+	//check = meshMap["SpaceShip"]->CreateMeshByObj("Mesh/SpaceShip.obj");
+
 
 
 	if (!check)
@@ -95,6 +93,7 @@ bool Initialize()
 		cout << "Mesh Load Failed" << endl;
 		return false;
 	}
+
 
 	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;

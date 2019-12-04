@@ -170,12 +170,13 @@ void Renderer::Draw(const glm::mat4 & worldMatrix, const int primitiveType, cons
 	location = glGetUniformLocation(currentShaderID, "u_color");
 	glUniform4f(location, color.r, color.g, color.b, color.a);
 
+
 	location = glGetUniformLocation(currentShaderID, "u_sunLight");
-	glUniform3f(location, 0,0,3);
+	glUniform3fv(location,sizeof(glm::vec3), glm::value_ptr(light.sunLight));
 
 
 	location = glGetUniformLocation(currentShaderID, "u_ambientLight");
-	glUniform1f(location, 0.2f);
+	glUniform1f(location, light.ambientLight);
 
 
 	glBindVertexArray(vao);

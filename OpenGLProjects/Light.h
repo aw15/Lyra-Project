@@ -7,6 +7,9 @@ public:
 
 
 public:
-	glm::vec3 sunLight;
+	glm::vec3 sunLight = {0,0,0};
+	float ambientLight = 0.2f;
+
+	bool sunLightOff = false;
 };
 
