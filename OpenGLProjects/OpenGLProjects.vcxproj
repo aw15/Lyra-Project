@@ -149,6 +149,7 @@
     <ClCompile Include="MeshObject.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -159,6 +160,7 @@
     <ClInclude Include="MeshObject.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Robot.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

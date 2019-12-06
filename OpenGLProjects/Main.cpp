@@ -3,6 +3,7 @@
 #include"MeshObject.h"
 #include"Mesh.h"
 #include"Physics.h"
+#include"Robot.h"
 
 
 GLvoid drawScene(GLvoid);
@@ -12,35 +13,59 @@ Renderer* renderer;
 Physics physics;
 vector<MeshObject*> objectList;
 
-MeshObject lineObject;
+vector<Robot*> robots;
+
+Robot* player;
+
 
 unordered_map<string,Mesh*> meshMap;
 
 
 auto prevTime = chrono::high_resolution_clock::now();
 
-
 float mouseStartX, mouseStartY, mouseEndX, mouseEndY;
+
+#define DETECT_DISTANCE 6
+
+
 
 
 void Keyboard(unsigned char key, int x, int y)
 {
 	switch (key) {
 	case 'w':
-		objectList[0]->Translate({ 0,0,-0.1 });
+		player->SetMoveDirAndRotate({ 0,0,-1 });
 		break;
 	case 's':
-		objectList[0]->Translate({ 0,0,0.1 });
+		player->SetMoveDirAndRotate({ 0,0,1 });
 		break;
 	case 'a':
-		objectList[0]->Translate({ -0.1,0,0 });
+		player->SetMoveDirAndRotate({ -1,0,0 });
 		break;
 	case 'd':
-		objectList[0]->Translate({ 0.1,0,0 });
+		player->SetMoveDirAndRotate({ 1,0,0 });
 		break;
 	}
 }
 
+
+void KeyboardUp(unsigned char key, int x, int y)
+{
+	switch (key) {
+	case 'w':
+		player->moveDir = { 0,0,0 };
+		break;
+	case 's':
+		player->moveDir = { 0,0,0 };
+		break;
+	case 'a':
+		player->moveDir = { 0,0,0 };
+		break;
+	case 'd':
+		player->moveDir = { 0,0,0 };
+		break;
+	}
+}
 
 void SpecialInput(int key, int x, int y)
 {
@@ -74,14 +99,14 @@ bool Initialize()
 	renderer->AddShaderWithTwoParam("lineVertex.glsl", "pixel.glsl", "line");
 	renderer->AddShaderWithTwoParam("vertexBasic.glsl", "lightPixel.glsl","obj");
 
-	renderer->SetViewMatrix({ 0,5,5 }, { 0,0,0 }, { 0,1,0 });
+	renderer->SetViewMatrix({ 0,20,20 }, { 0,0,0 }, { 0,1,0 });
 	renderer->SetProjMatrix(90.f, 0.1f, 100.0f);
 
 	meshMap["Cube"] = new Mesh();
 	check = meshMap["Cube"]->CreateMeshByObj("Mesh/cube.obj");
 
-	//meshMap["Wolf"] = new Mesh();
-	//check = meshMap["Wolf"]->CreateMeshByObj("Mesh/Wolf.obj");
+	meshMap["pyramid"] = new Mesh();
+	check = meshMap["pyramid"]->CreateMeshByObj("Mesh/pyramid.obj");
 
 	//meshMap["SpaceShip"] = new Mesh();
 	//check = meshMap["SpaceShip"]->CreateMeshByObj("Mesh/SpaceShip.obj");
@@ -94,14 +119,42 @@ bool Initialize()
 		return false;
 	}
 
-
+	//Floor//
 	auto tempObject = new MeshObject();
 	BasicObjectDesc objDesc;
 	objDesc.primitiveType = GL_TRIANGLES;
-	tempObject->color = { 1,0,0 ,1};
-	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,0,0 }, { 0,0,0 }, { 1,1,1});
+	tempObject->color = { 0.1,0.5,0.3 ,1};
+	tempObject->Initialize(objDesc, renderer, meshMap["Cube"], { 0,-2 ,0 }, { 0,0,0 }, { 20,1,10});
 
 	objectList.push_back(tempObject);
+
+	glm::vec3 robotsPosition[4] = { {3,0,0},{0,0,7},{4,0,4},{2,0,5} };
+
+	for (int i = 0; i < 4; i++)
+	{
+		//Robots//
+		auto robot = new Robot();
+		objDesc.primitiveType = GL_TRIANGLES;
+		robot->color = { BASIC_COLOR[rand() % 5] };
+		robot->Initialize(objDesc, renderer, meshMap["pyramid"], robotsPosition[i], { 0,0,0 }, {1,1,1 });
+		robot->speed = 2.0f;
+		robot->SetMoveDirAndRotate(rand() % 4);
+		robot->maxBoundary.x = 17;
+		robot->maxBoundary.z = 7;
+		robot->minBoundary.x = -17;
+		robot->minBoundary.z = -7;
+		robots.push_back(robot);
+	}
+
+
+	//Robots//
+	player = new Robot();
+	objDesc.primitiveType = GL_TRIANGLES;
+	player->color = { BASIC_COLOR[rand() % 5] };
+	player->Initialize(objDesc, renderer, meshMap["pyramid"], {0,0,-5}, { 0,0,0 }, { 1,1,1 });
+	player->speed = 5.0f;
+	//robot->moveDir = glm::normalize(glm::vec3{ 1,0,0 });
+
 
 	return true;
 }
@@ -151,6 +204,8 @@ void Mouse(int button, int state, int x, int y) {
 
 int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정 
 { //--- 윈도우 생성하기
+	srand(time(NULL));
+
 	glutInit(&argc, argv); // glut 초기화
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA); // 디스플레이 모드 설정
 	glutInitWindowPosition(0, 0); // 윈도우의 위치 지정
@@ -182,6 +237,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 	glutDisplayFunc(drawScene); // 출력 함수의 지정
 	glutReshapeFunc(Reshape); // 다시 그리기 함수 지정
 	glutKeyboardFunc(Keyboard);
+	glutKeyboardUpFunc(KeyboardUp);
 	glutMouseFunc(Mouse);
 	glutMotionFunc(MousDrag);
 	glutSpecialFunc(SpecialInput);
@@ -191,6 +247,7 @@ int main(int argc, char** argv) // 윈도우 출력하고 콜백함수 설정
 
 	return true;
 }
+
 
 
 GLvoid drawScene() // 콜백 함수: 출력 
@@ -214,7 +271,24 @@ GLvoid drawScene() // 콜백 함수: 출력
 		data->Render();//쉐이더한테 값 넘겨주고
 	}
 
+	player->Update(diff.count());
+	player->Render();
+
+	for (auto& data : robots)
+	{
+		if (glm::length(player->GetPosition() - data->GetPosition()) < DETECT_DISTANCE)
+		{
+			data->SetMoveDirAndRotate(player->GetPosition() - data->GetPosition());
+		}
+
+
+		data->Update(diff.count());//월드행렬 계산
+		data->Render();//쉐이더한테 값 넘겨주고
+	}
 	
+
+
+
 	glutSwapBuffers();
 	glutPostRedisplay();
 }

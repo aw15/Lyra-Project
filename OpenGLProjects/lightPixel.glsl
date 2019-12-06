@@ -18,5 +18,5 @@ void main(void) {
 
 	finalColor += (vec3(ex_Color) * ex_diffuse);
 
-	gl_FragColor = vec4(finalColor,1); 
+	gl_FragColor = vec4(ex_Color); 
 }

@@ -51,4 +51,19 @@ void stringTokenize(vector<string>& result, string & s, char delim)
 	}
 }
 
+float GetAngle(const glm::vec3 & a, const glm::vec3 & b)
+{
+	float cosAngle = acos(glm::dot(glm::vec2{ a.x,a.z }, glm::vec2{ b.x,b.z }));
+
+
+
+
+	//외적의 z성분으로 방향이 결정된다.
+
+	float angle = (a.z * b.x - a.x * b.z > 0.0f) ? cosAngle : -cosAngle;
+
+	return angle;
+
+}
+
 
